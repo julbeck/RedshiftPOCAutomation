@@ -1,0 +1,9 @@
+account_info = "320963489128"
+region_info = "us-east-1"
+source_engine = "sqlserver"
+source_db = "dms_sample"
+source_host = "ec2-3-86-250-37.compute-1.amazonaws.com"
+source_user = "awssct"
+source_pwd = "Password1"
+source_port = 1433
+migration_type = "full-load"
