@@ -69,8 +69,8 @@ class RedshiftPocAutomationStack(core.Stack):
             db_name="comments_cluster",
             master_username="dwh_user",
 #            master_user_password=clusterpwd,
-            master_user_password=comments_cluster_secret.secret_value.to_string(),
-#            master_user_password="W7wFE7ojiL9TeLFQ11cm7uuKu1amu4rc",
+#            master_user_password=comments_cluster_secret.secret_value.to_string(),
+            master_user_password="W7wFE7ojiL9TeLFQ11cm7uuKu1amu4rc",
             iam_roles=[_rs_cluster_role.role_arn],
             node_type=f"{ec2_instance_type}",
             cluster_subnet_group_name=demo_cluster_subnet_group.ref
