@@ -27,6 +27,25 @@ class RedshiftPocAutomationStack(core.Stack):
             removal_policy=core.RemovalPolicy.DESTROY
         )
 
+        # Create RedShift cluster
+
+        # Redshift IAM Role
+        _rs_cluster_role = _iam.Role(
+            self, "redshiftClusterRole",
+            assumed_by=_iam.ServicePrincipal(
+                "redshift.amazonaws.com"),
+            managed_policies=[
+                _iam.ManagedPolicy.from_aws_managed_policy_name(
+                    "AmazonS3ReadOnlyAccess"
+                )
+            ]
+        )
+
+        comments_cluster_secret.grant_read(_rs_cluster_role)
+        comments_cluster_secret.grant_write(_rs_cluster_role)
+ 
+        clusterpwd = core.SecretValue.secrets_manager('RedshiftDemoClusterSecret').to_string()
+
         # Subnet Group for Cluster
 
         demo_cluster_subnet_group = _redshift.CfnClusterSubnetGroup(
@@ -49,7 +68,10 @@ class RedshiftPocAutomationStack(core.Stack):
             number_of_nodes=numberofnodes,
             db_name="comments_cluster",
             master_username="dwh_user",
-            master_user_password="W7wFE7ojiL9TeLFQ11cm7uuKu1amu4rc",
+#            master_user_password=clusterpwd,
+            master_user_password=comments_cluster_secret.secret_value.to_string(),
+#            master_user_password="W7wFE7ojiL9TeLFQ11cm7uuKu1amu4rc",
+            iam_roles=[_rs_cluster_role.role_arn],
             node_type=f"{ec2_instance_type}",
             cluster_subnet_group_name=demo_cluster_subnet_group.ref
         )
@@ -74,3 +96,34 @@ class RedshiftPocAutomationStack(core.Stack):
     @property
     def get_cluster_host(self):
         return self.demo_cluster.attr_endpoint_address
+
+        ###########################################
+        ################# OUTPUTS #################
+        ###########################################
+        output_1 = core.CfnOutput(
+            self,
+            "RedshiftCluster",
+            value=f"{demo_cluster.attr_endpoint_address}",
+            description=f"RedshiftCluster Endpoint"
+        )
+
+        output_2 = core.CfnOutput(
+            self,
+            "RedshiftClusterPassword",
+            value=(
+                f"https://console.aws.amazon.com/secretsmanager/home?region="
+                f"{core.Aws.REGION}"
+                f"#/secret?name="
+                f"{comments_cluster_secret.secret_arn}"
+            ),
+            description=f"Redshift Cluster Password in Secrets Manager"
+        )
+        output_3 = core.CfnOutput(
+            self,
+            "RedshiftIAMRole",
+            value=(
+                f"{_rs_cluster_role.role_arn}"
+            ),
+            description=f"Redshift Cluster IAM Role Arn"
+        )
+

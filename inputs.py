@@ -7,3 +7,4 @@ source_user = "awssct"
 source_pwd = "Password1"
 source_port = 1433
 migration_type = "full-load"
+vpc_id = "vpc-0dcdbbb111a70d3b9"

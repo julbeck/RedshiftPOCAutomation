@@ -9,28 +9,17 @@ from redshift_poc_automation.redshift_poc_automation_stack import RedshiftPocAut
 from redshift_poc_automation.stacks.dms_stack import DmsStack
 from inputs import *
 
-#account_info = "320963489128"
-#region_info = "us-east-1"
-#source_engine = "sqlserver"
-#source_db = "dms_sample"
-#source_host = "ec2-3-86-250-37.compute-1.amazonaws.com"
-#source_user = "awssct"
-#source_pwd = "Password1"
-#source_port = 1433
-#migration_type = "full-load" 
-
 app = core.App()
 
 # VPC Stack for hosting Secure API & Other resources
 vpc_stack = VpcStack(
     app,
     f"{app.node.try_get_context('project')}-vpc-stack",
-    from_vpc_id="vpc-0dcdbbb111a70d3b9",
+    from_vpc_id=vpc_id,
     stack_log_level="INFO",
     description="Redshift POC Automation: Custom Multi-AZ VPC",
     env=core.Environment(account=account_info, region=region_info)
 )
-
 
 # Deploy Redshift cluster and load data"
 
@@ -38,8 +27,8 @@ redshift_demo = RedshiftPocAutomationStack(
     app,
     f"{app.node.try_get_context('project')}-stack",
     vpc=vpc_stack,
-    ec2_instance_type="dc2.large",
-    numberofnodes=1,
+    ec2_instance_type=instance_type,
+    numberofnodes=number_of_nodes,
     stack_log_level="INFO",
     description="Redshift POC Automation: Deploy Redshift cluster and load data"
 )
