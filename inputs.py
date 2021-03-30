@@ -8,3 +8,5 @@ source_pwd = "Password1"
 source_port = 1433
 migration_type = "full-load"
 vpc_id = "vpc-0dcdbbb111a70d3b9"
+number_of_nodes = 1
+instance_type = "dc2.large"
