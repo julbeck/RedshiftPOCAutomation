@@ -43,6 +43,7 @@ dms_stack = DmsStack(
     cluster=redshift_demo,
     source_engine=source_engine,
     source_db=source_db,
+    source_schema=source_schema,
     source_host=source_host,
     source_user=source_user,
     source_pwd=source_pwd,

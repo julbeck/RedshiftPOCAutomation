@@ -23,6 +23,7 @@ class DmsStack(core.Stack):
         cluster,
         source_engine,
         source_db,
+        source_schema,
         source_host,
         source_user,
         source_pwd,
@@ -34,13 +35,28 @@ class DmsStack(core.Stack):
     ) -> None:
         super().__init__(scope, id, **kwargs)
 
+        tablemappings="""{
+          "rules": [
+            {
+              "rule-type": "selection",
+              "rule-id": "1",
+              "rule-name": "1",
+              "object-locator": {
+                "schema-name": "%"""+source_schema + """",
+                "table-name": "%"
+              },
+              "rule-action": "include",
+              "filters": []
+            }
+          ]
+        }"""
+
         self.dms_endpoint_tgt = _dms.CfnEndpoint(
             self,
             "DMSendpointtgt",
             endpoint_type="target",
             engine_name="redshift",
             database_name=f"{cluster.get_cluster_dbname}",
-#            database_name=f"{cluster.get_cluster_dbname}",
             password=f"{cluster.get_cluster_password}",
             username=f"{cluster.get_cluster_user}",
             server_name=f"{cluster.get_cluster_host}",
@@ -85,22 +101,8 @@ class DmsStack(core.Stack):
             replication_instance_arn=self.get_repinstance_id,
             source_endpoint_arn=self.get_srcendpoint_id,
             target_endpoint_arn=self.get_tgtendpoint_id,
-            table_mappings="""{
-  "rules": [
-    {
-      "rule-type": "selection",
-      "rule-id": "1",
-      "rule-name": "1",
-      "object-locator": {
-        "schema-name": "%dbo",
-        "table-name": "%"
-      },
-      "rule-action": "include",
-      "filters": []
-    }
-  ]
-}"""
-         )
+            table_mappings=tablemappings
+        )
 
     @property
     def get_repinstance_id(self):
