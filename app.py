@@ -29,6 +29,8 @@ redshift_demo = RedshiftPocAutomationStack(
     vpc=vpc_stack,
     ec2_instance_type=instance_type,
     numberofnodes=number_of_nodes,
+    master_user=master_user,
+    master_pwd=master_pwd,
     stack_log_level="INFO",
     description="Redshift POC Automation: Deploy Redshift cluster and load data"
 )
