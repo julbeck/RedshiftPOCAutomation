@@ -37,24 +37,20 @@ class DmsStack(core.Stack):
         super().__init__(scope, id, **kwargs)
 
         # DMS IAM Role
-#        if from_vpc_id is not None:
-#            self.vpc = _ec2.Vpc.from_lookup(
-#                self, "vpc",
-#                vpc_id=from_vpc_id
-#            )
-#        else:
-
-        _rs_cluster_role = _iam.Role(
-            self, "dmsvpcrole",
-            assumed_by=_iam.ServicePrincipal(
-                "dms.amazonaws.com"),
-            managed_policies=[
-                _iam.ManagedPolicy.from_aws_managed_policy_name(
-                    "AmazonDMSVPCManagementRole"
-                )
-            ],
-            role_name = "dms-vpc-role"
-        )
+        if _iam.ManagedPolicy.from_aws_managed_policy_name("dms-vpc-role"):
+            pass
+        else:
+          _rs_cluster_role = _iam.Role(
+              self, "dmsvpcrole",
+              assumed_by=_iam.ServicePrincipal(
+                  "dms.amazonaws.com"),
+              managed_policies=[
+                  _iam.ManagedPolicy.from_aws_managed_policy_name(
+                      "AmazonDMSVPCManagementRole"
+                  )
+              ],
+              role_name = "dms-vpc-role"
+          )
 
         tablemappings="""{
           "rules": [
