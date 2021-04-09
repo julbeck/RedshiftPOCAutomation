@@ -1,19 +1,17 @@
 from aws_cdk import aws_ec2 as _ec2
 from aws_cdk import core
 
-env_USA = core.Environment(account="320963489128", region="us-east-1")
-
 class GlobalArgs():
     """
     Helper to define global statics
     """
 
-    OWNER = "SamirKakli"
+    OWNER = "Redshift POC SSA team"
     ENVIRONMENT = "development"
     REPO_NAME = "redshift-demo"
-    SOURCE_INFO = f"https://github.com/kaklis/{REPO_NAME}"
+    SOURCE_INFO = f"https://github.com/kaklis/RedshiftPOCAutomation"
     VERSION = "2021_03_15"
-    SUPPORT_EMAIL = ["kaklis@amazon.com", ]
+    SUPPORT_EMAIL = ["aws-redshift-poc-sa-amer@amazon.com"]
 
 class VpcStack(core.Stack):
 
@@ -27,7 +25,7 @@ class VpcStack(core.Stack):
     ) -> None:
         super().__init__(scope, id, **kwargs)
 
-        if from_vpc_id is not None:
+        if from_vpc_id != "CREATE":
             self.vpc = _ec2.Vpc.from_lookup(
                 self, "vpc",
                 vpc_id=from_vpc_id

@@ -17,8 +17,8 @@ vpc_stack = VpcStack(
     f"{app.node.try_get_context('project')}-vpc-stack",
     from_vpc_id=vpc_id,
     stack_log_level="INFO",
-    description="Redshift POC Automation: Custom Multi-AZ VPC",
-    env=core.Environment(account=account_info, region=region_info)
+    description="Redshift POC Automation: Custom Multi-AZ VPC"
+#    env=core.Environment(account=account_info, region=region_info)
 )
 
 # Deploy Redshift cluster and load data"
