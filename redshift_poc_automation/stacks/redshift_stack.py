@@ -44,6 +44,7 @@ class RedshiftStack(core.Stack):
             removal_policy=core.RemovalPolicy.DESTROY
         )
 
+        # IAM Role for Cluster
         cluster_iam_role = aws_iam.Role(
             self, "redshiftClusterRole",
             assumed_by=aws_iam.ServicePrincipal(
@@ -56,18 +57,13 @@ class RedshiftStack(core.Stack):
         )
         cluster_masteruser_secret.grant_read(cluster_iam_role)
 
+        # Subnet Group for Cluster
         cluster_subnet_group = aws_redshift.CfnClusterSubnetGroup(
             self,
             "redshiftDemoClusterSubnetGroup",
-            subnet_ids=vpc.get_vpc_private_isolated_subnet_ids,
+            subnet_ids=vpc.get_vpc_private_subnet_ids,
             description="Redshift Demo Cluster Subnet Group"
         )
-
-        # clusterpwd = core.SecretValue.secrets_manager('RedshiftDemoClusterSecret').to_string()
-
-        # Subnet Group for Cluster
-
-
 
         if number_of_nodes > 1:
             clustertype = "multi-node"

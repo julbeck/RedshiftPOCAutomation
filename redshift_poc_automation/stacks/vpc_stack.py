@@ -45,16 +45,10 @@ class VpcStack(core.Stack):
                 enable_dns_hostnames=True,
                 subnet_configuration=[
                     aws_ec2.SubnetConfiguration(
-                        name="public_subnet1", cidr_mask=cidr_mask, subnet_type=aws_ec2.SubnetType.PUBLIC
+                        name="public_subnet", cidr_mask=cidr_mask, subnet_type=aws_ec2.SubnetType.PUBLIC
                     ),
                     aws_ec2.SubnetConfiguration(
-                        name="public_subnet2", cidr_mask=cidr_mask, subnet_type=aws_ec2.SubnetType.PUBLIC
-                    ),
-                    aws_ec2.SubnetConfiguration(
-                        name="private_subnet1", cidr_mask=cidr_mask, subnet_type=aws_ec2.SubnetType.ISOLATED
-                    ),
-                    aws_ec2.SubnetConfiguration(
-                        name="private_subnet2", cidr_mask=cidr_mask, subnet_type=aws_ec2.SubnetType.ISOLATED
+                        name="private_subnet", cidr_mask=cidr_mask, subnet_type=aws_ec2.SubnetType.PRIVATE
                     )
                 ]
             )
