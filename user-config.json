@@ -1,0 +1,21 @@
+{
+  "vpc_id": "CREATE",
+  "redshift_endpoint": "CREATE",
+  "dms_instance_private_endpoint": "N/A",
+  "vpc": {
+    "on_prem_cidr": "10.0.0.0/8",
+    "vpc_cidr": "10.210.0.0/16",
+    "public_subnet1_cidr": "10.210.10.0/24",
+    "public_subnet2_cidr": "10.210.11.0/24",
+    "private_subnet1_cidr": "10.210.20.0/24",
+    "private_subnet1_cidr": "10.210.21.0/24"
+  },
+   "redshift": {
+    "cluster_identifier": "redshift-cluster",
+    "database_name": "dev",
+    "node_type": "dc2.large",
+    "number_of_nodes": "2",
+    "master_user_name": "awsuser"
+  }
+}
+
