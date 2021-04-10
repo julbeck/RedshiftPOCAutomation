@@ -5,10 +5,8 @@
   "vpc": {
     "on_prem_cidr": "10.0.0.0/8",
     "vpc_cidr": "10.210.0.0/16",
-    "public_subnet1_cidr": "10.210.10.0/24",
-    "public_subnet2_cidr": "10.210.11.0/24",
-    "private_subnet1_cidr": "10.210.20.0/24",
-    "private_subnet1_cidr": "10.210.21.0/24"
+    "number_of_az": "2",
+    "cidr_mask": "24"
   },
    "redshift": {
     "cluster_identifier": "redshift-cluster",
