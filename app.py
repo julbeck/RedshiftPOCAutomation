@@ -1,20 +1,16 @@
 #!/usr/bin/env python3
 
-import os
 
+import json
 from aws_cdk import core
-
 from redshift_poc_automation.stacks.vpc_stack import VpcStack
 from redshift_poc_automation.stacks.redshift_stack import RedshiftStack
-
-# from redshift_poc_automation.redshift_poc_automation_stack import RedshiftPocAutomationStack
-# from redshift_poc_automation.stacks.dms_stack import DmsStack
-# from inputs import *
-import json
+from redshift_poc_automation.stacks.glue_crawler_stack import GlueCrawlerStack
+from redshift_poc_automation.stacks.dms_on_prem_to_redshift_stack import DmsOnPremToRedshiftStack
+from redshift_poc_automation.stacks.dmsinstance_stack import DmsInstanceStack
 
 app = core.App()
-
-
+env = {'account': '295238233559', 'region': 'us-east-1'}
 config = json.load(open("user-config.json"))
 
 vpc_id = config.get('vpc_id')
@@ -23,58 +19,80 @@ vpc_config = config.get('vpc')
 redshift_endpoint = config.get('redshift_endpoint')
 redshift_config = config.get('redshift')
 
+dms_instance_private_endpoint = config.get('dms_instance_private_endpoint')
 
+dms_on_prem_to_redshift_target = config.get('dms_on_prem_to_redshift_target')
+dms_on_prem_to_redshift_config = config.get('dms_on_prem_to_redshift')
+
+glue_crawler_s3_target = config.get('glue_crawler_s3_target')
+glue_crawler_s3_config = config.get('glue_crawler_s3')
 
 # VPC Stack for hosting Secure API & Other resources
-if vpc_id == "CREATE":
-    vpc_stack = VpcStack(
-        app,
-        f"{app.node.try_get_context('project')}-vpc-stack",
-        vpc_id=vpc_id,
-        vpc_config=vpc_config,
-        stack_log_level="INFO",
-        description="Redshift POC Automation: Custom Multi-AZ VPC"
-    )
+vpc_stack = VpcStack(
+    app,
+    f"{app.node.try_get_context('project')}-vpc-stack",
+    env=env,
+    vpc_id=vpc_id,
+    vpc_config=vpc_config,
+    stack_log_level="INFO",
+    description="AWS Analytics Automation: Custom Multi-AZ VPC"
+)
 
-if redshift_endpoint == "CREATE":
-    # Deploy Redshift cluster and load data"
-    redshift_demo = RedshiftStack(
+# Deploy Redshift cluster and load data"
+if redshift_endpoint != "N/A":
+
+    redshift_stack = RedshiftStack(
         app,
-        f"{app.node.try_get_context('project')}-stack",
+        f"{app.node.try_get_context('project')}-redshift-stack",
+        env=env,
         vpc=vpc_stack,
         redshift_endpoint=redshift_endpoint,
         redshift_config=redshift_config,
         stack_log_level="INFO",
-        description="Redshift POC Automation: Deploy Redshift cluster and load data"
+        description="AWS Analytics Automation: Deploy Redshift cluster and load data"
     )
-    redshift_demo.add_dependency(vpc_stack);
+    redshift_stack.add_dependency(vpc_stack);
 
 
+# DMS Instance Stack
+if dms_instance_private_endpoint == "CREATE":
+    dms_instance_stack = DmsInstanceStack(
+     app,
+     f"{app.node.try_get_context('project')}-dmsinstance-stack",
+     env=env,
+     vpc=vpc_stack,
+     stack_log_level="INFO",
+     description="AWS Analytics Automation: DMS Replication Instance"
+ )
+dms_instance_stack.add_dependency(vpc_stack);
 
+# DMS OnPrem to Redshift Stack for migrating database to redshift
+if dms_on_prem_to_redshift_target == "CREATE":
+    dms_on_prem_to_redshift_stack = DmsOnPremToRedshiftStack(
+        app,
+        f"{app.node.try_get_context('project')}-dms-stack",
+        env=env,
+        dmsinstance=dms_instance_stack,
+        cluster=redshift_stack,
+        dmsredshift_config=dms_on_prem_to_redshift_config,
+        stack_log_level="INFO",
+        description="AWS Analytics Automation: Custom Multi-AZ VPC"
+    )
+dms_on_prem_to_redshift_stack.add_dependency(redshift_stack);
+dms_on_prem_to_redshift_stack.add_dependency(dms_instance_stack);
 
+# Glue Crawler Stack to crawl s3 locations
+if glue_crawler_s3_target != "N/A":
+    glue_crawler_stack = GlueCrawlerStack(
+        app,
+        f"{app.node.try_get_context('project')}-glue-crawler-stack",
+        env=env,
+        glue_crawler_s3_config=glue_crawler_s3_config,
+        stack_log_level="INFO",
+        description="AWS Analytics Automation: Deploy Glue Crawler for S3 data lake"
+    )
+    glue_crawler_stack.add_dependency(vpc_stack);
 
-
-
-# DMS Stack for migrating database to redshift 
-# dms_stack = DmsStack(
-#     app,
-#     f"{app.node.try_get_context('project')}-dms-stack",
-#     vpc=vpc_stack,
-#     cluster=redshift_demo,
-#     source_engine=source_engine,
-#     source_db=source_db,
-#     source_schema=source_schema,
-#     source_host=source_host,
-#     source_user=source_user,
-#     source_pwd=source_pwd,
-#     source_port=source_port,
-#     migrationtype=migration_type,
-#     stack_log_level="INFO",
-#     description="Redshift POC Automation: Custom Multi-AZ VPC"
-# )
-#
-# dms_stack.add_dependency(vpc_stack);
-# dms_stack.add_dependency(redshift_demo);
 
 # Stack Level Tagging
 _tags_lst = app.node.try_get_context("tags")

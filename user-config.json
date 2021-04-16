@@ -1,19 +1,44 @@
 {
   "vpc_id": "CREATE",
   "redshift_endpoint": "CREATE",
-  "dms_instance_private_endpoint": "N/A",
+  "dms_instance_private_endpoint": "CREATE",
+  "dms_on_prem_to_redshift_target": "CREATE",
+  "dms_migrate_to_s3": "N/A",
+  "glue_crawler_s3_target": "CREATE",
+  "glue_convert": "N/A",
+  "glue_flatten": "N/A",
+  "step_function": "N/A",
+  "lambda": "N/A",
   "vpc": {
     "on_prem_cidr": "10.0.0.0/8",
     "vpc_cidr": "10.210.0.0/16",
     "number_of_az": "2",
     "cidr_mask": "24"
   },
-   "redshift": {
+  "redshift": {
     "cluster_identifier": "redshift-cluster",
     "database_name": "dev",
     "node_type": "dc2.large",
     "number_of_nodes": "2",
     "master_user_name": "awsuser"
+  },
+  "dms_on_prem_to_redshift": {
+    "source_db": "dms_sample",
+    "source_engine": "sqlserver",
+    "source_schema": "dbo",
+    "source_host": "ec2-3-86-250-37.compute-1.amazonaws.com",
+    "source_user": "awssct",
+    "source_pwd": "Password1",
+    "source_port": 1433,
+    "migration_type": "full-load"
+  },
+  "glue_crawler_s3": {
+    "iam_role_arn": "CREATE",
+    "database_name": "my_data_lake",
+    "s3_locations": [
+      "s3://my-new-aws-s3-bucket232313/csv/",
+      "s3://my-new-aws-s3-bucket232313/random/"
+    ]
   }
 }
 

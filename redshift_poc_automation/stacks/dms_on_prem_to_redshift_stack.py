@@ -1,6 +1,4 @@
-from aws_cdk import aws_dms as _dms
-from aws_cdk import aws_ec2 as _ec2
-from aws_cdk import aws_iam as _iam
+from aws_cdk import aws_dms
 from aws_cdk import core
 
 class GlobalArgs():
@@ -8,49 +6,35 @@ class GlobalArgs():
     Helper to define global statics
     """
 
-    OWNER = "SamirKakli"
+    OWNER = "Redshift POC SSA team"
     ENVIRONMENT = "development"
     REPO_NAME = "redshift-demo"
-    SOURCE_INFO = f"https://github.com/kaklis/{REPO_NAME}"
+    SOURCE_INFO = f"https://github.com/kaklis/RedshiftPOCAutomation"
     VERSION = "2021_03_15"
-    SUPPORT_EMAIL = ["kaklis@amazon.com", ]
+    SUPPORT_EMAIL = ["aws-redshift-poc-sa-amer@amazon.com"]
 
-class DmsStack(core.Stack):
+class DmsOnPremToRedshiftStack(core.Stack):
 
     def __init__(
         self,
         scope: core.Construct, id: str,
-        vpc,
+        dmsinstance,
         cluster,
-        source_engine,
-        source_db,
-        source_schema,
-        source_host,
-        source_user,
-        source_pwd,
-        source_port,
-        migrationtype,
+        dmsredshift_config: dict,
         stack_log_level: str,
         **kwargs
 
     ) -> None:
         super().__init__(scope, id, **kwargs)
 
-        # DMS IAM Role
-        if _iam.ManagedPolicy.from_aws_managed_policy_name("dms-vpc-role"):
-            pass
-        else:
-          _rs_cluster_role = _iam.Role(
-              self, "dmsvpcrole",
-              assumed_by=_iam.ServicePrincipal(
-                  "dms.amazonaws.com"),
-              managed_policies=[
-                  _iam.ManagedPolicy.from_aws_managed_policy_name(
-                      "AmazonDMSVPCManagementRole"
-                  )
-              ],
-              role_name = "dms-vpc-role"
-          )
+        source_db = dmsredshift_config.get('source_db')
+        source_engine = dmsredshift_config.get('source_engine')
+        source_schema = dmsredshift_config.get('source_schema')
+        source_host = dmsredshift_config.get('source_host')
+        source_user = dmsredshift_config.get('source_user')
+        source_pwd = dmsredshift_config.get('source_pwd')
+        source_port = int(dmsredshift_config.get('source_port'))
+        migration_type = dmsredshift_config.get('migration_type')
 
         tablemappings="""{
           "rules": [
@@ -68,7 +52,7 @@ class DmsStack(core.Stack):
           ]
         }"""
 
-        self.dms_endpoint_tgt = _dms.CfnEndpoint(
+        self.dms_endpoint_tgt = aws_dms.CfnEndpoint(
             self,
             "DMSendpointtgt",
             endpoint_type="target",
@@ -80,7 +64,7 @@ class DmsStack(core.Stack):
             port=5439
          )
 
-        self.dms_endpoint_src = _dms.CfnEndpoint(
+        self.dms_endpoint_src = aws_dms.CfnEndpoint(
             self,
             "DMSendpointsrc",
             endpoint_type="source",
@@ -92,30 +76,11 @@ class DmsStack(core.Stack):
             server_name=source_host,
          )
 
-        dmssubnetgrp = _dms.CfnReplicationSubnetGroup(
-            self,
-            "DMSsubnetgroup",
-            replication_subnet_group_description="Subnet group for DMS replication instance",
-            subnet_ids=vpc.get_vpc_public_subnet_ids
-         )
-
-        self.dms = _dms.CfnReplicationInstance(
-            self,
-            "SQLservertoRedshift",
-            replication_instance_class="dms.t3.medium",
-            allocated_storage=50,
-            allow_major_version_upgrade=None,
-            auto_minor_version_upgrade=None,
-            multi_az=False,
-            publicly_accessible=True,
-            replication_subnet_group_identifier=dmssubnetgrp.ref
-        )
-
-        dms_task = _dms.CfnReplicationTask(
+        dms_task = aws_dms.CfnReplicationTask(
             self,
             "DMSreplicationtask",
-            migration_type=migrationtype,
-            replication_instance_arn=self.get_repinstance_id,
+            migration_type=migration_type,
+            replication_instance_arn=dmsinstance.get_repinstance_id,
             source_endpoint_arn=self.get_srcendpoint_id,
             target_endpoint_arn=self.get_tgtendpoint_id,
             table_mappings=tablemappings

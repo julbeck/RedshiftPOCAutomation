@@ -22,6 +22,7 @@ class VpcStack(core.Stack):
         stack_log_level: str,
         vpc_id: str,
         vpc_config: dict,
+
         ** kwargs
     ) -> None:
         super().__init__(scope, id, **kwargs)
