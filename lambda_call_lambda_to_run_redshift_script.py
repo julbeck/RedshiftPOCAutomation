@@ -1,95 +1,62 @@
-import boto3
-import time
-import traceback
-import botocore.exceptions as be
 import json
-import os
+import boto3
 import cfnresponse
 
 def handler(event, context):
     print(event)
-    redshift_host=os.environ('REDSHIFT_HOST')
-    redshift_iam_role=os.environ('REDSHIFT_IAM_ROLE')
-    script_s3_path=os.environ('SCRIPT_S3_PATH')
+    if event['RequestType'] == 'Delete':
+        cfnresponse.send(event, context, cfnresponse.SUCCESS, {'Data': 'No Action Needed'})
+    # Check if this is a Create and we're failing Creates
+    elif event['RequestType'] == 'Create' and event['ResourceProperties'].get('FailCreate', False):
+        raise RuntimeError('Create failure requested')
+    else:
+        action = event['ResourceProperties']['Action']
+        redshift_host = event['ResourceProperties']['RedshiftHost']
+        redshift_db = event['ResourceProperties']['RedshiftDb']
+        redshift_user = event['ResourceProperties']['RedshiftUser']
+        script_s3_path = event['ResourceProperties']['ScriptS3Path']
+        redshift_iam_role = event['ResourceProperties']['RedshiftIamRole']
+        lambda_arn = event['ResourceProperties']['LambdaArn']
+        lambda_payload = {
+            "input": {
+                "Action": action,
+                "RedshiftHost": redshift_host,
+                "RedshiftDb": redshift_db,
+                "RedshiftUser": redshift_user,
+                "RedshiftIamRole": redshift_iam_role,
+                "ScriptS3Path": script_s3_path,
+                "redshift_iam_role": redshift_iam_role
+            }
+        }
+        response = boto3.client('lambda').invoke(
+            FunctionName=lambda_arn,
+            InvocationType='Event',
+            Payload=json.dumps(lambda_payload)
+        )
+        print(response)
+        cfnresponse.send(event, context, cfnresponse.SUCCESS, {'Data': 'Create complete'})
 
-    db = event['Input'].get('db')
-    user = event['Input'].get('user')
+if __name__ == "__main__":
+    event ={
+	'RequestType': 'Create',
+	'ServiceToken': 'arn:aws:lambda:us-east-1:855402123041:function:redshift-demo-redshift-bo-SingletonLambda130c8acc4-NLBM0M7107K',
+	'ResponseURL': 'https://cloudformation-custom-resource-response-useast1.s3.amazonaws.com/arn%3Aaws%3Acloudformation%3Aus-east-1%3A855402123041%3Astack/redshift-demo-redshift-bootstrap-stack2/89df0570-a250-11eb-84de-0a43cdcd5209%7CcustomResourceLambdaCallRunRedshiftScript%7C51ca3d8a-e891-4e35-a840-bc0ef5ccfc9d?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20210421T032106Z&X-Amz-SignedHeaders=host&X-Amz-Expires=7200&X-Amz-Credential=AKIA6L7Q4OWTYMT6AIEY%2F20210421%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Signature=650a79b649f7971b784a4685fc7af602b75c3dcbc401119b433a6cf28b99bd5b',
+	'StackId': 'arn:aws:cloudformation:us-east-1:855402123041:stack/redshift-demo-redshift-bootstrap-stack2/89df0570-a250-11eb-84de-0a43cdcd5209',
+	'RequestId': '51ca3d8a-e891-4e35-a840-bc0ef5ccfc9d',
+	'LogicalResourceId': 'customResourceLambdaCallRunRedshiftScript',
+	'ResourceType': 'AWS::CloudFormation::CustomResource',
+	'ResourceProperties': {
+		'ServiceToken': 'arn:aws:lambda:us-east-1:855402123041:function:redshift-demo-redshift-bo-SingletonLambda130c8acc4-NLBM0M7107K',
+		'Action': 'RUN_REDSHIFT_SCRIPT',
+		'RedshiftHost': 'redshift-demo-redshift-stack-redshiftcluster-wo73jo4zwwtg.cxzy7wkirtem.us-east-1.redshift.amazonaws.com',
+		'LambdaArn': 'arn:aws:lambda:us-east-1:855402123041:function:redshift-demo-redshift-bo-lambdaRunRedshiftScript0-4EKDBQRJD21F',
+		'RedshiftIamRole': 'arn:aws:iam::855402123041:role/redshift-demo-redshift-st-redshiftClusterRole4D302-1I44UET6SAEVE',
+		'RedshiftDb': 'dev',
+		'ScriptS3Path': 's3://event-driven-app-with-lambda-redshift/scripts/test_script.sql',
+		'RedshiftUser': 'awsuser'
+	}
+}
 
-    parameter_group_name = event['Input'].get('parameter_group_name')
-    sql_id = event['Input'].get('sql_id')
-    source_clusterid = event['Input'].get('source_clusterid')
-    cluster_type = event['Input'].get('cluster_type')
-    clusterid = source_clusterid + "-" + cluster_type if cluster_type else source_clusterid
+    context = ""
+    handler(event, context)
 
-    try:
-        client = boto3.client('redshift')
-        extract_prefix = json.loads(get_config_from_s3(extract_bucket, 'config/extract_prefix.json')) if extract_bucket else {'prefix':'','extract_output':''}
-        prefix = extract_prefix['prefix']
-        extract_output = extract_prefix['extract_output']
-        if action == "cluster_status":
-            res = {'status': cluster_status(client, clusterid)}
-        elif action == "setup_redshift_objects":
-            res = {'sql_id': setup_redshift_objects(replay_bucket, clusterid, db, user)}
-        elif action == "unload_stats":
-            script = "call unload_detailed_query_stats('" + prefix + "')"
-            sql_id = run_sql(clusterid, db, user, script)
-            res = {'sql_id': sql_id}
-        elif action == "load_stats":
-            script = "call load_detailed_query_stats('" + prefix + "')"
-            sql_id = run_sql(clusterid, db, user, script, False, 'async')
-            res = {'sql_id': sql_id}
-        elif action == "sql_status":
-            res = {'status': sql_status(sql_id)}
-        else:
-            raise ValueError("Invalid Task: " + action)
-    except Exception as e:
-        print(e)
-        print(traceback.format_exc())
-        raise
-    print(res)
-    return res
-
-def cluster_status(client, clusterid):
-    try:
-        desc = client.describe_clusters(ClusterIdentifier=clusterid)['Clusters'][0]
-        if isinstance(desc, dict):
-            status = desc.get('ClusterStatus') + desc.get('ClusterAvailabilityStatus') + (desc.get('RestoreStatus').get('Status') if desc.get('RestoreStatus') else "")
-        else:
-            status = 'Unavailable'
-    except be.ClientError as e:
-        msg = e.response['Error']['Code']
-        if msg == 'ClusterNotFound':
-            status = 'nonExistent'
-        else:
-            print(desc)
-            raise
-    return status
-
-def get_config_from_s3(bucket, key):
-    obj = boto3.client('s3').get_object(Bucket=bucket, Key=key)
-    return obj['Body'].read().decode('utf-8')
-
-def setup_redshift_objects(bucket, clusterid, db, user):
-    key = 'config/setup_redshift_objects.sql'
-    script = get_config_from_s3(bucket, key)
-    sql_id = run_sql(clusterid, db, user, script)
-    return sql_id
-
-def run_sql(clusterid, db, user, script, with_event=True, run_type='sync'):
-    res = boto3.client("redshift-data").execute_statement(Database=db, DbUser=user, Sql=script,
-                                                          ClusterIdentifier=clusterid, WithEvent=with_event)
-    query_id = res["Id"]
-    statuses = ["STARTED", "FAILED", "FINISHED"] if run_type == 'async' else ["FAILED", "FINISHED"]
-    done = False
-    while not done:
-        status = sql_status(query_id)
-        if status in statuses:
-            break
-    return query_id
-
-def sql_status(query_id):
-    res = boto3.client("redshift-data").describe_statement(Id=query_id)
-    status = res["Status"]
-    if status == "FAILED":
-        raise Exception('Error:' + res["Error"])
-    return status.strip('"')

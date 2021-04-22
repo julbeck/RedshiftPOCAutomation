@@ -1,13 +1,16 @@
 {
   "vpc_id": "CREATE",
-  "redshift_endpoint": "CREATE",
-  "dms_instance_private_endpoint": "CREATE",
-  "dms_on_prem_to_redshift_target": "CREATE",
+  "redshift_endpoint": "N/A",
+  "redshift_bootstrap_script_s3_path": "N/A",
+  "redshift_what_if": "CREATE",
+  "dms_instance_private_endpoint": "N/A",
+  "dms_on_prem_to_redshift_target": "N/A",
+  "glue_crawler_s3_target": "N/A",
+
   "dms_migrate_to_s3": "N/A",
-  "glue_crawler_s3_target": "CREATE",
   "glue_convert": "N/A",
   "glue_flatten": "N/A",
-  "step_function": "N/A",
+  "step_function": "on-prem to s3 > glue crawler > glue_job/spectrum  > redshift; on-prem to s3 > glue crawler > spectrum > redshift;  on-prem to redshift;  ",
   "lambda": "N/A",
   "vpc": {
     "on_prem_cidr": "10.0.0.0/8",
@@ -20,7 +23,19 @@
     "database_name": "dev",
     "node_type": "dc2.large",
     "number_of_nodes": "2",
-    "master_user_name": "awsuser"
+    "master_user_name": "awsuser",
+    "subnet_type": "PRIVATE"
+  },
+  "redshift_what_if_config": {
+    "cluster_identifier": "redshift-what-if",
+    "database_name": "dev",
+    "master_user_name": "awsuser",
+    "subnet_type": "PRIVATE",
+    "redshift_bootstrap_script_s3_path": "s3://event-driven-app-with-lambda-redshift/scripts/test_script.sql",
+    "configurations": [
+      {"node_type": "dc2.large","number_of_nodes": "3"},
+      {"node_type": "dc2.8xlarge","number_of_nodes": "2"}
+    ]
   },
   "dms_on_prem_to_redshift": {
     "source_db": "dms_sample",
