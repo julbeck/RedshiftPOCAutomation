@@ -1,10 +1,11 @@
 {
-  "vpc_id": "CREATE",
-  "redshift_endpoint": "N/A",
+  "vpc_id": "vpc-0dcdbbb111a70d3b9",
+  "redshift_endpoint": "CREATE",
   "redshift_bootstrap_script_s3_path": "N/A",
-  "redshift_what_if": "CREATE",
+  "redshift_what_if": "N/A",
   "dms_instance_private_endpoint": "N/A",
   "dms_on_prem_to_redshift_target": "N/A",
+  "sct_on_prem_to_redshift_target": "CREATE",
   "glue_crawler_s3_target": "N/A",
 
   "dms_migrate_to_s3": "N/A",
@@ -46,6 +47,9 @@
     "source_pwd": "Password1",
     "source_port": 1433,
     "migration_type": "full-load"
+  },
+    "sct_on_prem_to_redshift": {
+    "key_name": "cdkstaging"
   },
   "glue_crawler_s3": {
     "iam_role_arn": "CREATE",

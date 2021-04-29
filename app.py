@@ -9,6 +9,7 @@ from redshift_poc_automation.stacks.redshift_stack import RedshiftStack
 from redshift_poc_automation.stacks.redshift_bootstrap_stack import RedshiftBootstrapStack
 from redshift_poc_automation.stacks.glue_crawler_stack import GlueCrawlerStack
 from redshift_poc_automation.stacks.dms_on_prem_to_redshift_stack import DmsOnPremToRedshiftStack
+from redshift_poc_automation.stacks.sct_stack import SctOnPremToRedshiftStack
 from redshift_poc_automation.stacks.dmsinstance_stack import DmsInstanceStack
 
 app = core.App()
@@ -32,7 +33,9 @@ redshift_what_if_config = config.get('redshift_what_if_config')
 dms_instance_private_endpoint = config.get('dms_instance_private_endpoint')
 
 dms_on_prem_to_redshift_target = config.get('dms_on_prem_to_redshift_target')
+sct_on_prem_to_redshift_target = config.get('sct_on_prem_to_redshift_target')
 dms_on_prem_to_redshift_config = config.get('dms_on_prem_to_redshift')
+sct_on_prem_to_redshift_config = config.get('sct_on_prem_to_redshift')
 
 glue_crawler_s3_target = config.get('glue_crawler_s3_target')
 glue_crawler_s3_config = config.get('glue_crawler_s3')
@@ -112,8 +115,6 @@ if redshift_what_if != "N/A":
         )
         redshift_what_if_bootstrap_stack.add_dependency(redshift_what_if_stack);
 
-
-
 # DMS Instance Stack
 if dms_instance_private_endpoint == "CREATE":
     dms_instance_stack = DmsInstanceStack(
@@ -136,10 +137,25 @@ if dms_on_prem_to_redshift_target == "CREATE":
         cluster=redshift_stack,
         dmsredshift_config=dms_on_prem_to_redshift_config,
         stack_log_level="INFO",
-        description="AWS Analytics Automation: Custom Multi-AZ VPC"
+        description="AWS Analytics Automation: DMS endpoints and tasks"
     )
     dms_on_prem_to_redshift_stack.add_dependency(redshift_stack);
     dms_on_prem_to_redshift_stack.add_dependency(dms_instance_stack);
+
+# SCT OnPrem to Redshift Stack for migrating database to redshift
+if sct_on_prem_to_redshift_target == "CREATE":
+    sct_on_prem_to_redshift_stack = SctOnPremToRedshiftStack(
+        app,
+        f"{app.node.try_get_context('project')}-sct-stack",
+        env=env,
+        cluster=redshift_stack,
+        dmsredshift_config=dms_on_prem_to_redshift_config,
+        sctredshift_config=sct_on_prem_to_redshift_config,
+        vpc=vpc_stack,
+        stack_log_level="INFO",
+        description="AWS Analytics Automation: SCT install on new EC2 Instance"
+    )
+    sct_on_prem_to_redshift_stack.add_dependency(redshift_stack);
 
 # Glue Crawler Stack to crawl s3 locations
 if glue_crawler_s3_target != "N/A":
