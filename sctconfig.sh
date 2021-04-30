@@ -13,6 +13,6 @@ chmod 755 /usr/local/jdbc-drivers/*
 aws s3 cp s3://event-driven-app-with-lambda-redshift/scripts/sctcliauto.scts ./sctcliauto.scts
 aws s3 cp s3://event-driven-app-with-lambda-redshift/scripts/sctrun.sh ./sctrun.sh
 
-mypwd=$(aws secretsmanager get-secret-value --region us-east-1 --secret-id arn:aws:secretsmanager:us-east-1:320963489128:secret:setRedshiftDemoClusterSecre-xZVBT6zvxSMy-kvgtVh| python3 -c "import json, sys; print(json.load(sys.stdin)['SecretString'])")
+#mypwd=$(aws secretsmanager get-secret-value --region us-east-1 --secret-id arn:aws:secretsmanager:us-east-1:320963489128:secret:setRedshiftDemoClusterSecre-xZVBT6zvxSMy-kvgtVh| python3 -c "import json, sys; print(json.load(sys.stdin)['SecretString'])")
 
-sed -i "s/password: ''/password: '$mypwd'/" ./sctcliauto.scts
+#sed -i "s/password: ''/password: '$mypwd'/" ./sctcliauto.scts

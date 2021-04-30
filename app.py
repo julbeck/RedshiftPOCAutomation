@@ -151,6 +151,7 @@ if sct_on_prem_to_redshift_target == "CREATE":
         cluster=redshift_stack,
         dmsredshift_config=dms_on_prem_to_redshift_config,
         sctredshift_config=sct_on_prem_to_redshift_config,
+        redshift_config=redshift_config,
         vpc=vpc_stack,
         stack_log_level="INFO",
         description="AWS Analytics Automation: SCT install on new EC2 Instance"
