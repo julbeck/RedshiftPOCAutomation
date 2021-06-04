@@ -31,7 +31,6 @@ class RedshiftStack(core.Stack):
             node_type = redshift_config.get('node_type')
             number_of_nodes = int(redshift_config.get('number_of_nodes'))
             master_user_name = redshift_config.get('master_user_name')
-            master_password = redshift_config.get('master_password')
             subnet_type = redshift_config.get('subnet_type')
 
 
@@ -39,10 +38,10 @@ class RedshiftStack(core.Stack):
             # Create Cluster Password  ## MUST FIX EXCLUDE CHARACTERS FEATURE AS IT STILL INCLUDES SINGLE QUOTES SOMETIMES WHICH WILL FAIL
             self.cluster_masteruser_secret = aws_secretsmanager.Secret(
                 self,
-                "setRedshiftDemoClusterSecret",
-                description="Redshift Demo Cluster Secret",
-                # secret_name="RedshiftDemoClusterSecret",
-                generate_secret_string=aws_secretsmanager.SecretStringGenerator(exclude_characters='''''''/"@ ,\;&`'),
+                "RedshiftClusterSecret",
+                description="Redshift Cluster Secret",
+                secret_name='RedshiftClusterSecretAA',
+                generate_secret_string=aws_secretsmanager.SecretStringGenerator(exclude_characters='''''''/"@ ,\;&`(){}!<>', password_length=10),
                 removal_policy=core.RemovalPolicy.DESTROY
             )
 
@@ -88,8 +87,8 @@ class RedshiftStack(core.Stack):
                 db_name=database_name,
                 master_username=master_user_name,
                 cluster_type=clustertype,
-                #master_user_password=self.cluster_masteruser_secret.secret_value.to_string(),
-                master_user_password=master_password,
+                master_user_password=self.cluster_masteruser_secret.secret_value.to_string(),
+                #master_user_password=master_password,
                 iam_roles=[self.cluster_iam_role.role_arn],
                 node_type=f"{node_type}",
                 number_of_nodes=number_of_nodes,
@@ -163,6 +162,10 @@ class RedshiftStack(core.Stack):
     @property
     def get_cluster_iam_role(self) -> builtins.str:
         return self.cluster_iam_role.role_arn
+
+    @property
+    def get_cluster_secret(self) -> builtins.str:
+        return self.cluster_masteruser_secret.secret_name
 
     ############## FIX bug in CDK. Always returns None #########################
     # @property

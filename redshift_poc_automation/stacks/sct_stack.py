@@ -34,10 +34,7 @@ class SctOnPremToRedshiftStack(core.Stack):
         redshift_db = cluster.get_cluster_dbname
         redshift_user = cluster.get_cluster_user
         redshift_port = cluster.get_cluster_iam_role
-        #redshift_pwd = cluster.get_cluster_password
-        redshift_pwd = redshift_config.get('master_password')
-        #secret_arn = cluster.cluster_masteruser_secret.secret_name
-        #textredshift_pwd = core.SecretValue.plain_text(cluster.cluster_masteruser_secret.to_string())
+        secret_arn = 'RedshiftClusterSecretAA'
         amiID = 'ami-042e0580ee1b9e2af'
 
         if source_engine == 'sqlserver':
@@ -46,11 +43,14 @@ class SctOnPremToRedshiftStack(core.Stack):
         with open("./sctconfig.sh") as f:
             user_data = f.read()
 
+        with open("./sctconfig2.sh") as f:
+            user_data2 = f.read()
+
         # Instance Role and SSM Managed Policy
         role = aws_iam.Role(self, "InstanceSSM", assumed_by=aws_iam.ServicePrincipal("ec2.amazonaws.com"))
 
         role.add_managed_policy(aws_iam.ManagedPolicy.from_aws_managed_policy_name("service-role/AmazonEC2RoleforSSM"))
-        #role.add_managed_policy(aws_iam.ManagedPolicy.from_aws_managed_policy_name("SecretsManagerReadWrite"))
+        role.add_managed_policy(aws_iam.ManagedPolicy.from_aws_managed_policy_name("SecretsManagerReadWrite"))
 
         #secrets_client = boto3.client(service_name='secretsmanager', region_name='us-east-1')
         #get_secret_value_response = secrets_client.get_secret_value(
@@ -85,11 +85,15 @@ class SctOnPremToRedshiftStack(core.Stack):
             key_name=keyname,
             role = role,
             security_group=my_security_group,
+#            resource_signal_timeout=core.Duration.minutes(5),
             user_data=aws_ec2.UserData.custom(user_data)
             )
 
-        sctcommand = 'sh sctrun.sh ' + source_sct + " REDSHIFT " + source_host + " " + str(source_port) + " " + source_db + " " + source_schema + " " + source_user + " " + source_pwd + " " + redshift_host + " 5439 " + redshift_db + " " + redshift_user + " " + redshift_pwd
+        sctcommand = 'sh sctrun.sh ' + source_sct + " REDSHIFT " + source_host + " " + str(source_port) + " " + source_db + " " + source_schema + " " + source_user + " " + source_pwd + " " + redshift_host + " 5439 " + redshift_db + " " + redshift_user + " " + 'redshift_pwd'
+        #print(sctcommand)
         instance.add_user_data(sctcommand)
+
+        instance.add_user_data(user_data2)
 
         sctcommand2 = 'java -XX:+UseParallelGC --add-opens=java.base/jdk.internal.loader=ALL-UNNAMED --add-exports=java.base/jdk.internal.loader=ALL-UNNAMED --add-exports=java.base/jdk.internal.misc=ALL-UNNAMED -jar "/opt/aws-schema-conversion-tool/lib/app/AWSSchemaConversionToolBatch.jar" -type scts -script sctcliauto.scts'
         instance.add_user_data(sctcommand2)

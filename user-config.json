@@ -3,8 +3,8 @@
   "redshift_endpoint": "CREATE",
   "redshift_bootstrap_script_s3_path": "N/A",
   "redshift_what_if": "N/A",
-  "dms_instance_private_endpoint": "N/A",
-  "dms_on_prem_to_redshift_target": "N/A",
+  "dms_instance_private_endpoint": "CREATE",
+  "dms_on_prem_to_redshift_target": "CREATE",
   "sct_on_prem_to_redshift_target": "CREATE",
   "glue_crawler_s3_target": "N/A",
 
@@ -25,7 +25,6 @@
     "node_type": "dc2.large",
     "number_of_nodes": "2",
     "master_user_name": "awsuser",
-    "master_password": "R8dsh!ft123",
     "subnet_type": "PRIVATE"
   },
   "redshift_what_if_config": {
@@ -47,11 +46,11 @@
     "source_user": "awssct",
     "source_pwd": "Password1",
     "source_port": 1433,
-    "migration_type": "full-load"
+    "migration_type": "cdc"
   },
   "sct_on_prem_to_redshift": {
     "key_name": "cdkstaging",
-    "s3_bucket_output": "s3://samir-userdata/"
+    "s3_bucket_output": "s3://samir-userdata/SCT/"
   },
   "glue_crawler_s3": {
     "iam_role_arn": "CREATE",
@@ -62,4 +61,3 @@
     ]
   }
 }
-
