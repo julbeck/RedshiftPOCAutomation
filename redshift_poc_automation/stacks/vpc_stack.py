@@ -75,6 +75,13 @@ class VpcStack(core.Stack):
             value=f"{self.vpc.vpc_default_security_group.security_group_id}",
             description="Default security group of this VPC."
         )
+        
+        output_2 = core.CfnOutput(
+            self,
+            "Test output",
+            value="It got here",
+            description="Testing whether it got here"
+        )
 
     # properties to share with other stacks
     @property
