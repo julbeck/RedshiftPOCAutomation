@@ -63,7 +63,8 @@ class DmsInstanceStack(core.Stack):
             auto_minor_version_upgrade=None,
             multi_az=False,
             publicly_accessible=True,
-            replication_subnet_group_identifier=dms_subnet_group.ref
+            replication_subnet_group_identifier=dms_subnet_group.ref,
+            vpc_security_group_ids=["sct-sg-dms"]
         )
 
     def dms_vpc_role(self):

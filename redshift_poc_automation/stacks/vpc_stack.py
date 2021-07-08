@@ -53,23 +53,23 @@ class VpcStack(core.Stack):
                     )
                 ]
             )
-            
+
         dms_security_group = aws_ec2.SecurityGroup(
-            self,
-            id = "sct-sg-dms",
-            vpc = self.vpc,
-            security_group_name = "sct-sg-dms",
-            description = "Gives DMS instance access to Redshift"
-        )
-        dms_security_group.add_ingress_rule(dms_security_group, aws_ec2.Port.all_traffic(), "Self-referencing rule.")
-        
+             self,
+             id = "sct-sg-dms",
+             vpc = self.vpc,
+             security_group_name = "sct-sg-dms",
+             description = "Gives DMS instance access to Redshift"
+         )
+        dms_security_group.add_ingress_rule(peer=dms_security_group, connection=aws_ec2.Port.all_traffic(), description="Self-referencing rule.")
+        dms_security_group.add_ingress_rule(peer=aws_ec2.Peer.anyipv4(), connection=aws_ec2.Port.tcp(22), description="SSH from anywhere")
+
         output_0 = core.CfnOutput(
             self,
             "AutomationFrom",
             value=f"{GlobalArgs.SOURCE_INFO}",
             description="To know more about this automation stack, check out our github page."
         )
-        
         output_1 = core.CfnOutput(
             self,
             "New SG",
@@ -99,4 +99,3 @@ class VpcStack(core.Stack):
         return self.vpc.select_subnets(
             subnet_type=aws_ec2.SubnetType.PRIVATE
         ).subnet_ids
-
