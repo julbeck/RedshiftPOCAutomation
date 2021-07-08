@@ -61,13 +61,14 @@ class SctOnPremToRedshiftStack(core.Stack):
         ### TAKE THIS OUT SO THAT INSTANCE IS NOT PUBLIC ###
         subnet = aws_ec2.SubnetSelection(subnet_type=aws_ec2.SubnetType('PUBLIC'))
 
-        my_security_group = aws_ec2.SecurityGroup(self, "SecurityGroup",
-                                              vpc=vpc.vpc,
-                                              description="Allow ssh access to ec2 instances",
-                                              allow_all_outbound=True
-                                              )
-        my_security_group.add_ingress_rule(aws_ec2.Peer.any_ipv4(), aws_ec2.Port.tcp(22), "allow ssh access from the world")
-        my_security_group.add_ingress_rule(my_security_group, aws_ec2.Port.all_tcp(), "self-referencing rule")
+        # my_security_group = aws_ec2.SecurityGroup(self, "SecurityGroup",
+        #                                       vpc=vpc.vpc,
+        #                                       description="Allow ssh access to ec2 instances",
+        #                                       allow_all_outbound=True
+        #                                       )
+        # my_security_group.add_ingress_rule(aws_ec2.Peer.any_ipv4(), aws_ec2.Port.tcp(22), "allow ssh access from the world")
+        # my_security_group.add_ingress_rule(my_security_group, aws_ec2.Port.all_tcp(), "self-referencing rule")
+        my_security_group=vpc.get_vpc_security_group_id
 
         custom_ami = aws_ec2.MachineImage.latest_amazon_linux(
             generation=aws_ec2.AmazonLinuxGeneration.AMAZON_LINUX_2,
@@ -84,7 +85,7 @@ class SctOnPremToRedshiftStack(core.Stack):
             vpc_subnets=subnet,
             key_name=keyname,
             role = role,
-            security_group=my_security_group,
+            security_group=[my_security_group],
 #            resource_signal_timeout=core.Duration.minutes(5),
             user_data=aws_ec2.UserData.custom(user_data)
             )
