@@ -68,7 +68,7 @@ class SctOnPremToRedshiftStack(core.Stack):
         #                                       )
         # my_security_group.add_ingress_rule(aws_ec2.Peer.any_ipv4(), aws_ec2.Port.tcp(22), "allow ssh access from the world")
         # my_security_group.add_ingress_rule(my_security_group, aws_ec2.Port.all_tcp(), "self-referencing rule")
-        my_security_group=vpc.get_vpc_security_group_id
+        my_security_group=vpc.get_vpc_security_group
 
         custom_ami = aws_ec2.MachineImage.latest_amazon_linux(
             generation=aws_ec2.AmazonLinuxGeneration.AMAZON_LINUX_2,

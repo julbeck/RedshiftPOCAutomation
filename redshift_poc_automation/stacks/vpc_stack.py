@@ -103,3 +103,7 @@ class VpcStack(core.Stack):
     @property
     def get_vpc_security_group_id(self):
         return self.dms_security_group.security_group_id
+
+    @property
+    def get_vpc_security_group(self):
+        return self.dms_security_group
