@@ -72,9 +72,9 @@ class VpcStack(core.Stack):
         
         output_1 = core.CfnOutput(
             self,
-            "Default SG",
-            value=f"{self.vpc.vpc_default_security_group.security_group_id}",
-            description="Default security group of this VPC."
+            "New SG",
+            value=f"{dms_security_group.security_group_id}",
+            description="New security group of this VPC."
         )
         
         output_2 = core.CfnOutput(
