@@ -1,7 +1,7 @@
 {
   "app": "python3 app.py",
   "context": {
-    "project": "redshift-demo",
+    "project": "redshift-demo-2",
     "@aws-cdk/core:enableStackNameDuplicates": "true",
     "aws-cdk:enableDiffNoFail": "true",
     "@aws-cdk/core:stackRelativeExports": "true",
