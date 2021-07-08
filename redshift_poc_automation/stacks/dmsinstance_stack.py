@@ -54,7 +54,7 @@ class DmsInstanceStack(core.Stack):
             subnet_ids=vpc.get_vpc_public_subnet_ids
          )
 
-        security_group_id = core.Fn.import_value("New SG")
+        security_group_id = vpc.get_vpc_security_group_id
 
         self.dms_instance = aws_dms.CfnReplicationInstance(
             self,

@@ -79,6 +79,7 @@ class RedshiftStack(core.Stack):
             else:
                 clustertype = "single-node"
                 number_of_nodes = None
+            security_group_id = vpc.get_vpc_security_group_id
 
             self.demo_cluster = aws_redshift.CfnCluster(
                 self,
@@ -91,7 +92,8 @@ class RedshiftStack(core.Stack):
                 iam_roles=[self.cluster_iam_role.role_arn],
                 node_type=f"{node_type}",
                 number_of_nodes=number_of_nodes,
-                cluster_subnet_group_name=self.cluster_subnet_group.ref
+                cluster_subnet_group_name=self.cluster_subnet_group.ref,
+                vpc_security_group_ids=[security_group_id]
             )
 
         ###########################################
