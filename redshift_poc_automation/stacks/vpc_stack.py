@@ -60,7 +60,7 @@ class VpcStack(core.Stack):
              vpc = self.vpc,
              security_group_name = "sct-sg-dms",
              description = "Gives DMS instance access to Redshift"
-         )
+        )
         dms_security_group.add_ingress_rule(peer=dms_security_group, connection=aws_ec2.Port.all_traffic(), description="Self-referencing rule.")
         dms_security_group.add_ingress_rule(peer=aws_ec2.Peer.any_ipv4(), connection=aws_ec2.Port.tcp(22), description="SSH from anywhere")
 
@@ -99,3 +99,7 @@ class VpcStack(core.Stack):
         return self.vpc.select_subnets(
             subnet_type=aws_ec2.SubnetType.PRIVATE
         ).subnet_ids
+
+    # @property
+    # def get_vpc_security_group_id(self):
+    #     return self.securitygroup.from_security_group_id(self,"sct-sg-dms",dms_security_group.security_group_id)
