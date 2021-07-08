@@ -41,7 +41,7 @@ class RedshiftStack(core.Stack):
                 "RedshiftClusterSecret",
                 description="Redshift Cluster Secret",
                 secret_name='RedshiftClusterSecretAA',
-                generate_secret_string='Pp1-'+aws_secretsmanager.SecretStringGenerator(exclude_punctuation=True, password_length=10)
+                generate_secret_string=aws_secretsmanager.SecretStringGenerator(exclude_punctuation=True, password_length=10)
                 removal_policy=core.RemovalPolicy.DESTROY
             )
 
