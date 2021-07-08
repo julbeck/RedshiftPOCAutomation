@@ -85,7 +85,7 @@ class SctOnPremToRedshiftStack(core.Stack):
             vpc_subnets=subnet,
             key_name=keyname,
             role = role,
-            security_group=[my_security_group],
+            security_group=my_security_group,
 #            resource_signal_timeout=core.Duration.minutes(5),
             user_data=aws_ec2.UserData.custom(user_data)
             )
