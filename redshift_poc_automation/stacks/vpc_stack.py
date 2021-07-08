@@ -62,7 +62,7 @@ class VpcStack(core.Stack):
              description = "Gives DMS instance access to Redshift"
          )
         dms_security_group.add_ingress_rule(peer=dms_security_group, connection=aws_ec2.Port.all_traffic(), description="Self-referencing rule.")
-        dms_security_group.add_ingress_rule(peer=aws_ec2.Peer.anyipv4(), connection=aws_ec2.Port.tcp(22), description="SSH from anywhere")
+        dms_security_group.add_ingress_rule(peer=aws_ec2.Peer.any_ipv4(), connection=aws_ec2.Port.tcp(22), description="SSH from anywhere")
 
         output_0 = core.CfnOutput(
             self,
