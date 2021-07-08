@@ -60,7 +60,7 @@ class VpcStack(core.Stack):
             vpc = self.vpc,
             description = "Gives DMS instance access to Redshift"
         )
-        dms_security_group.addIngressRule(dms_security_group, ec2.Port.all_traffic(), "Self-referencing rule.")
+        dms_security_group.add_ingress_rule(dms_security_group, ec2.Port.all_traffic(), "Self-referencing rule.")
         
         output_0 = core.CfnOutput(
             self,
