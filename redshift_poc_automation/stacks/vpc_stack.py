@@ -54,11 +54,27 @@ class VpcStack(core.Stack):
                 ]
             )
 
+        self.dms_security_group = aws_ec2.SecurityGroup(
+             self,
+             id = "sct-sg-dms",
+             vpc = self.vpc,
+             security_group_name = "sct-sg-dms",
+             description = "Gives DMS instance access to Redshift"
+        )
+        self.dms_security_group.add_ingress_rule(peer=self.dms_security_group, connection=aws_ec2.Port.all_traffic(), description="Self-referencing rule.")
+        self.dms_security_group.add_ingress_rule(peer=aws_ec2.Peer.any_ipv4(), connection=aws_ec2.Port.tcp(22), description="SSH from anywhere")
+
         output_0 = core.CfnOutput(
             self,
             "AutomationFrom",
             value=f"{GlobalArgs.SOURCE_INFO}",
             description="To know more about this automation stack, check out our github page."
+        )
+        output_1 = core.CfnOutput(
+            self,
+            "New SG",
+            value=f"{self.dms_security_group.security_group_id}",
+            description="New security group of this VPC."
         )
 
     # properties to share with other stacks
@@ -84,3 +100,10 @@ class VpcStack(core.Stack):
             subnet_type=aws_ec2.SubnetType.PRIVATE
         ).subnet_ids
 
+    @property
+    def get_vpc_security_group_id(self):
+        return self.dms_security_group.security_group_id
+
+    @property
+    def get_vpc_security_group(self):
+        return self.dms_security_group

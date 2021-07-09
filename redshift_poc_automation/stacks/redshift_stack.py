@@ -6,6 +6,7 @@ import json
 import boto3
 import builtins
 
+
 class RedshiftStack(core.Stack):
 
     def __init__(
@@ -33,15 +34,14 @@ class RedshiftStack(core.Stack):
             master_user_name = redshift_config.get('master_user_name')
             subnet_type = redshift_config.get('subnet_type')
 
-
-
             # Create Cluster Password  ## MUST FIX EXCLUDE CHARACTERS FEATURE AS IT STILL INCLUDES SINGLE QUOTES SOMETIMES WHICH WILL FAIL
             self.cluster_masteruser_secret = aws_secretsmanager.Secret(
                 self,
                 "RedshiftClusterSecret",
                 description="Redshift Cluster Secret",
                 secret_name='RedshiftClusterSecretAA',
-                generate_secret_string=aws_secretsmanager.SecretStringGenerator(exclude_characters='''''''/"@ ,\;&`(){}!<>', password_length=10),
+                generate_secret_string=aws_secretsmanager.SecretStringGenerator(
+                    exclude_punctuation=True, password_length=10),
                 removal_policy=core.RemovalPolicy.DESTROY
             )
 
@@ -74,12 +74,13 @@ class RedshiftStack(core.Stack):
                     description="Redshift Demo Cluster Subnet Group"
                 )
 
-
             if number_of_nodes > 1:
                 clustertype = "multi-node"
             else:
                 clustertype = "single-node"
                 number_of_nodes = None
+
+            security_group_id = vpc.get_vpc_security_group_id
 
             self.demo_cluster = aws_redshift.CfnCluster(
                 self,
@@ -88,13 +89,13 @@ class RedshiftStack(core.Stack):
                 master_username=master_user_name,
                 cluster_type=clustertype,
                 master_user_password=self.cluster_masteruser_secret.secret_value.to_string(),
-                #master_user_password=master_password,
+                # master_user_password=master_password,
                 iam_roles=[self.cluster_iam_role.role_arn],
                 node_type=f"{node_type}",
                 number_of_nodes=number_of_nodes,
-                cluster_subnet_group_name=self.cluster_subnet_group.ref
+                cluster_subnet_group_name=self.cluster_subnet_group.ref,
+                vpc_security_group_ids=[security_group_id]
             )
-
 
         ###########################################
         ################# OUTPUTS #################
@@ -136,7 +137,6 @@ class RedshiftStack(core.Stack):
         #     ),
         #     description=f"Redshift Cluster Identifier"
         # )
-
 
     # properties to share with other stacks
     @property
