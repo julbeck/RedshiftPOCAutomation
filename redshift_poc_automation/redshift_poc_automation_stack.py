@@ -10,8 +10,8 @@ class RedshiftPocAutomationStack(core.Stack):
         self,
         scope: core.Construct, id: str,
         vpc,
-        ec2_instance_type: str,
-        numberofnodes: int,
+        node_type: str,
+        number_of_nodes: int,
         master_user: str,
         master_pwd: str,
         stack_log_level: str,
@@ -57,24 +57,24 @@ class RedshiftPocAutomationStack(core.Stack):
             description="Redshift Demo Cluster Subnet Group"
         )
 
-        if numberofnodes > 1:
+        if number_of_nodes > 1:
           clustertype="multi-node"
         else:
           clustertype="single-node"
-          numberofnodes=None
+          number_of_nodes=None
 
         self.demo_cluster = _redshift.CfnCluster(
             self,
             "redshiftDemoCluster",
             cluster_type=clustertype,
-            number_of_nodes=numberofnodes,
+            number_of_nodes=number_of_nodes,
             db_name="comments_cluster",
             master_username=master_user,
 #            master_user_password=clusterpwd,
 #            master_user_password=comments_cluster_secret.secret_value.to_string(),
             master_user_password=master_pwd,
             iam_roles=[_rs_cluster_role.role_arn],
-            node_type=f"{ec2_instance_type}",
+            node_type=f"{node_type}",
             cluster_subnet_group_name=demo_cluster_subnet_group.ref
         )
 
