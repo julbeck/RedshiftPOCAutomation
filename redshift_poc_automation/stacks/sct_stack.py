@@ -48,7 +48,7 @@ class SctOnPremToRedshiftStack(core.Stack):
 
         get_secret_value_response = client.get_secret_value(
                 SecretId=secret_name
-            )
+            )['SecretString']
 
         if source_engine == 'sqlserver':
             source_sct = 'MSSQLDW'
