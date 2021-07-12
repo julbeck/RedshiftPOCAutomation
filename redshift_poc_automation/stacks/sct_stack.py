@@ -26,7 +26,7 @@ class SctOnPremToRedshiftStack(core.Stack):
         source_schema = dmsredshift_config.get('source_schema')
         source_host = dmsredshift_config.get('source_host')
         source_user = dmsredshift_config.get('source_user')
-        source_pwd = dmsredshift_config.get('source_pwd')
+        # source_pwd = dmsredshift_config.get('source_pwd')
         keyname = sctredshift_config.get('key_name')
         s3_bucket_output = sctredshift_config.get('s3_bucket_output')
         source_port = int(dmsredshift_config.get('source_port'))
@@ -36,7 +36,7 @@ class SctOnPremToRedshiftStack(core.Stack):
         redshift_port = cluster.get_cluster_iam_role
         secret_arn = 'RedshiftClusterSecretAA'
         amiID = 'ami-042e0580ee1b9e2af'
-        
+        ##get source password
         secret_name = "SourceDBPassword"
         region_name = boto3.session.Session().region_name
 
@@ -46,7 +46,7 @@ class SctOnPremToRedshiftStack(core.Stack):
             region_name=region_name,
         )
 
-        get_secret_value_response = client.get_secret_value(
+        source_pwd = client.get_secret_value(
                 SecretId=secret_name
             )['SecretString']
 
