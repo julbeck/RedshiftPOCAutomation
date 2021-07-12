@@ -117,16 +117,3 @@ class SctOnPremToRedshiftStack(core.Stack):
 
         sctcommand4 = 'aws s3 cp /awsutilities/SCT/assessmentreport.pdf ' + s3_bucket_output
         instance.add_user_data(sctcommand4)
-
-        output_0 = core.CfnOutput(
-            self,
-            "Found password",
-            value=f"{get_secret_value_response}",
-            description="Password stored in Secrets Manager."
-        )
-        output_1 = core.CfnOutput(
-            self,
-            "Region",
-            value=f"{region_name}",
-            description="Region of request."
-        )
