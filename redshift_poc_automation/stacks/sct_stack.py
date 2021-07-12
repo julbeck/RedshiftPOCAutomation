@@ -36,6 +36,26 @@ class SctOnPremToRedshiftStack(core.Stack):
         redshift_port = cluster.get_cluster_iam_role
         secret_arn = 'RedshiftClusterSecretAA'
         amiID = 'ami-042e0580ee1b9e2af'
+        
+        secret_name = "SourceDBPassword"
+        region_name = boto3.session.Session().region_name
+
+        session = boto3.session.Session()
+        client = session.client(
+            service_name='secretsmanager',
+            region_name=region_name,
+        )
+
+        get_secret_value_response = client.get_secret_value(
+                SecretId=secret_name
+            )
+
+        output_0 = core.CfnOutput(
+            self,
+            "Found password",
+            value=f"{get_secret_value_response}",
+            description="Password stored in Secrets Manager."
+        )
 
         if source_engine == 'sqlserver':
             source_sct = 'MSSQLDW'
