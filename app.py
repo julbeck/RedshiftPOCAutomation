@@ -46,7 +46,7 @@ glue_crawler_s3_config = config.get('glue_crawler_s3')
 # VPC Stack for hosting secure API & other resources
 vpc_stack = VpcStack(
     app,
-    f"{os.env.STACK_NAME}-vpc-stack",
+    f"{os.getenv('STACK_NAME')}-vpc-stack",
     env=env,
     vpc_id=vpc_id,
     vpc_config=vpc_config,
