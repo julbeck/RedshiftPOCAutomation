@@ -55,9 +55,6 @@ class VpcStack(core.Stack):
                 ]
             )
 
-        stack = core.Stack.of(self);
-        name = stack.stackName
-
         self.dms_security_group = aws_ec2.SecurityGroup(
              self,
              id = "sct-sg-dms",
@@ -84,7 +81,7 @@ class VpcStack(core.Stack):
         output_2 = core.CfnOutput(
             self,
             "Stack Name",
-            value=f"{name}",
+            value=f"{scope}",
             description="Name of the stack."
         )
 
