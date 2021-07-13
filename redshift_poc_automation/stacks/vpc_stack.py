@@ -1,5 +1,7 @@
 from aws_cdk import aws_ec2
 from aws_cdk import core
+import random
+import string
 
 
 class GlobalArgs():
@@ -55,9 +57,12 @@ class VpcStack(core.Stack):
                 ]
             )
 
+        letters = string.ascii_lowercase
+        tail = ''.join(random.choice(letters) for i in range(5))
+
         self.dms_security_group = aws_ec2.SecurityGroup(
              self,
-             id = "sct-sg-dms",
+             id = "sct-sg-dms-" + tail,
              vpc = self.vpc,
              security_group_name = "sct-sg-dms",
              description = "Gives DMS instance access to Redshift"
@@ -81,7 +86,7 @@ class VpcStack(core.Stack):
         output_2 = core.CfnOutput(
             self,
             "Stack Name",
-            value=f"{scope.stage_name}",
+            value=tail,
             description="Name of the stack."
         )
 
