@@ -3,6 +3,7 @@
 
 import json
 import boto3
+import os
 from aws_cdk import core
 from redshift_poc_automation.stacks.vpc_stack import VpcStack
 from redshift_poc_automation.stacks.redshift_stack import RedshiftStack
@@ -45,7 +46,7 @@ glue_crawler_s3_config = config.get('glue_crawler_s3')
 # VPC Stack for hosting secure API & other resources
 vpc_stack = VpcStack(
     app,
-    f"{process.env.STACK_NAME}-vpc-stack",
+    f"{os.env.STACK_NAME}-vpc-stack",
     env=env,
     vpc_id=vpc_id,
     vpc_config=vpc_config,
