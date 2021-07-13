@@ -64,7 +64,7 @@ class VpcStack(core.Stack):
              self,
              id = "sct-sg-dms-" + tail,
              vpc = self.vpc,
-             security_group_name = "sct-sg-dms",
+             security_group_name = "sct-sg-dms" + tail,
              description = "Gives DMS instance access to Redshift"
         )
         self.dms_security_group.add_ingress_rule(peer=self.dms_security_group, connection=aws_ec2.Port.all_traffic(), description="Self-referencing rule.")
@@ -81,13 +81,6 @@ class VpcStack(core.Stack):
             "New SG",
             value=f"{self.dms_security_group.security_group_id}",
             description="New security group of this VPC."
-        )
-
-        output_2 = core.CfnOutput(
-            self,
-            "Stack Name",
-            value=tail,
-            description="Name of the stack."
         )
 
     # properties to share with other stacks
