@@ -81,7 +81,7 @@ class VpcStack(core.Stack):
         output_2 = core.CfnOutput(
             self,
             "Stack Name",
-            value=f"{scope}",
+            value=f"{scope.stage_name}",
             description="Name of the stack."
         )
 
