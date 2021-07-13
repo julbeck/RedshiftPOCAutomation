@@ -1,6 +1,7 @@
 from aws_cdk import aws_ec2
 from aws_cdk import core
 
+
 class GlobalArgs():
     """
     Helper to define global statics
@@ -54,6 +55,9 @@ class VpcStack(core.Stack):
                 ]
             )
 
+        stack = core.Stack.of(self);
+        name = stack.stackName
+
         self.dms_security_group = aws_ec2.SecurityGroup(
              self,
              id = "sct-sg-dms",
@@ -68,13 +72,20 @@ class VpcStack(core.Stack):
             self,
             "AutomationFrom",
             value=f"{GlobalArgs.SOURCE_INFO}",
-            description="To know more about this automation stack, check out our github page."
+            description="To know more about this automation stack, check out our GitHub page."
         )
         output_1 = core.CfnOutput(
             self,
             "New SG",
             value=f"{self.dms_security_group.security_group_id}",
             description="New security group of this VPC."
+        )
+
+        output_2 = core.CfnOutput(
+            self,
+            "Stack Name",
+            value=f"{name}",
+            description="Name of the stack."
         )
 
     # properties to share with other stacks
