@@ -13,12 +13,14 @@ from redshift_poc_automation.stacks.sct_stack import SctOnPremToRedshiftStack
 from redshift_poc_automation.stacks.dmsinstance_stack import DmsInstanceStack
 
 app = core.App()
+stack = core.Stack.of(app).stack_name
 
 my_region = boto3.session.Session().region_name
 account_id = boto3.client('sts').get_caller_identity().get('Account')
 env = {'account': account_id, 'region': my_region}
 config = json.load(open("user-config.json"))
 
+# Get the values of the user-config file
 vpc_id = config.get('vpc_id')
 vpc_config = config.get('vpc')
 
@@ -41,10 +43,10 @@ glue_crawler_s3_target = config.get('glue_crawler_s3_target')
 glue_crawler_s3_config = config.get('glue_crawler_s3')
 
 
-# VPC Stack for hosting Secure API & Other resources
+# VPC Stack for hosting secure API & other resources
 vpc_stack = VpcStack(
     app,
-    f"{app.node.try_get_context('project')}-vpc-stack",
+    f"{stack}-vpc-stack",
     env=env,
     vpc_id=vpc_id,
     vpc_config=vpc_config,
