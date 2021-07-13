@@ -42,11 +42,11 @@ sct_on_prem_to_redshift_config = config.get('sct_on_prem_to_redshift')
 glue_crawler_s3_target = config.get('glue_crawler_s3_target')
 glue_crawler_s3_config = config.get('glue_crawler_s3')
 
-
+stackname = os.getenv('STACK_NAME')
 # VPC Stack for hosting secure API & other resources
 vpc_stack = VpcStack(
     app,
-    f"{os.getenv('STACK_NAME')}-vpc-stack",
+    f"{stackname}-vpc-stack",
     env=env,
     vpc_id=vpc_id,
     vpc_config=vpc_config,
@@ -59,7 +59,7 @@ if redshift_endpoint != "N/A":
 
     redshift_stack = RedshiftStack(
         app,
-        f"{app.node.try_get_context('project')}-redshift-stack",
+        f"{stackname}-redshift-stack",
         env=env,
         vpc=vpc_stack,
         redshift_endpoint=redshift_endpoint,
@@ -73,7 +73,7 @@ if redshift_bootstrap_script_s3_path != "N/A":
 
     redshift_bootstrap_stack = RedshiftBootstrapStack(
         app,
-        f"{app.node.try_get_context('project')}-redshift-bootstrap-stack",
+        f"{stackname}-redshift-bootstrap-stack",
         env=env,
         redshift=redshift_stack,
         redshift_bootstrap_script_s3_path=redshift_bootstrap_script_s3_path,
@@ -96,7 +96,7 @@ if redshift_what_if != "N/A":
         print(redshift_config)
         redshift_what_if_stack = RedshiftStack(
             app,
-            f"{app.node.try_get_context('project')}-redshift-what-if-stack-" + str(i),
+            f"{stackname}-redshift-what-if-stack-" + str(i),
             env=env,
             vpc=vpc_stack,
             redshift_endpoint="CREATE",
@@ -108,7 +108,7 @@ if redshift_what_if != "N/A":
 
         redshift_what_if_bootstrap_stack = RedshiftBootstrapStack(
             app,
-            f"{app.node.try_get_context('project')}-redshift-bootstrap-stack-" + str(i),
+            f"{stackname}-redshift-bootstrap-stack-" + str(i),
             env=env,
             redshift=redshift_what_if_stack,
             redshift_bootstrap_script_s3_path=redshift_what_if_config.get('redshift_bootstrap_script_s3_path'),
@@ -121,7 +121,7 @@ if redshift_what_if != "N/A":
 if dms_instance_private_endpoint == "CREATE":
     dms_instance_stack = DmsInstanceStack(
      app,
-     f"{app.node.try_get_context('project')}-dmsinstance-stack",
+     f"{stackname}-dmsinstance-stack",
      env=env,
      vpc=vpc_stack,
      stack_log_level="INFO",
@@ -133,7 +133,7 @@ if dms_instance_private_endpoint == "CREATE":
 if dms_on_prem_to_redshift_target == "CREATE":
     dms_on_prem_to_redshift_stack = DmsOnPremToRedshiftStack(
         app,
-        f"{app.node.try_get_context('project')}-dms-stack",
+        f"{stackname}-dms-stack",
         env=env,
         dmsinstance=dms_instance_stack,
         cluster=redshift_stack,
@@ -148,7 +148,7 @@ if dms_on_prem_to_redshift_target == "CREATE":
 if sct_on_prem_to_redshift_target == "CREATE":
     sct_on_prem_to_redshift_stack = SctOnPremToRedshiftStack(
         app,
-        f"{app.node.try_get_context('project')}-sct-stack",
+        f"{stackname}-sct-stack",
         env=env,
         cluster=redshift_stack,
         dmsredshift_config=dms_on_prem_to_redshift_config,
@@ -164,7 +164,7 @@ if sct_on_prem_to_redshift_target == "CREATE":
 if glue_crawler_s3_target != "N/A":
     glue_crawler_stack = GlueCrawlerStack(
         app,
-        f"{app.node.try_get_context('project')}-glue-crawler-stack",
+        f"{stackname}-glue-crawler-stack",
         env=env,
         glue_crawler_s3_config=glue_crawler_s3_config,
         stack_log_level="INFO",
