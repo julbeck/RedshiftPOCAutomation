@@ -30,6 +30,8 @@ class DmsInstanceStack(core.Stack):
 
         # DMS IAM Role
         self.dms_vpc_role()
+        self.dms_cloudwatch_logs_role()
+        self.dms_access_for_endpoint()
 
         #
         # try:
@@ -96,6 +98,73 @@ class DmsInstanceStack(core.Stack):
                 client.attach_role_policy(
                     RoleName='dms-vpc-role',
                     PolicyArn='arn:aws:iam::aws:policy/service-role/AmazonDMSVPCManagementRole'
+                )
+            except Exception as e:
+                print(e)
+
+    def dms_cloudwatch_logs_role(self):
+        client = boto3.client('iam')
+        try:
+            response = client.get_role(RoleName='dms-cloudwatch-logs-role')
+        except:
+            try:
+                role_policy_document = {
+                       "Version": "2012-10-17",
+                       "Statement": [
+                       {
+                         "Effect": "Allow",
+                         "Principal": {
+                            "Service": "dms.amazonaws.com"
+                         },
+                       "Action": "sts:AssumeRole"
+                       }
+                    ]
+                }
+                client.create_role(
+                    RoleName='dms-cloudwatch-logs-role',
+                    AssumeRolePolicyDocument=json.dumps(role_policy_document)
+                )
+                client.attach_role_policy(
+                    RoleName='dms-cloudwatch-logs-role',
+                    PolicyArn='arn:aws:iam::aws:policy/service-role/AmazonDMSCloudWatchLogsRole'
+                )
+            except Exception as e:
+                print(e)
+
+    def dms_access_for_endpoint(self):
+        client = boto3.client('iam')
+        try:
+            response = client.get_role(RoleName='dms-access-for-endpoint')
+        except:
+            try:
+                role_policy_document = {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Sid": "1",
+                            "Effect": "Allow",
+                            "Principal": {
+                                "Service": "dms.amazonaws.com"
+                            },
+                            "Action": "sts:AssumeRole"
+                        },
+                        {
+                            "Sid": "2",
+                            "Effect": "Allow",
+                            "Principal": {
+                                "Service": "redshift.amazonaws.com"
+                            },
+                            "Action": "sts:AssumeRole"
+                        }
+                    ]
+                }
+                client.create_role(
+                    RoleName='dms-access-for-endpoint',
+                    AssumeRolePolicyDocument=json.dumps(role_policy_document)
+                )
+                client.attach_role_policy(
+                    RoleName='dms-vpc-role',
+                    PolicyArn='arn:aws:iam::aws:policy/service-role/AmazonDMSRedshiftS3Role'
                 )
             except Exception as e:
                 print(e)
