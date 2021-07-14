@@ -163,7 +163,7 @@ class DmsInstanceStack(core.Stack):
                     AssumeRolePolicyDocument=json.dumps(role_policy_document)
                 )
                 client.attach_role_policy(
-                    RoleName='dms-vpc-role',
+                    RoleName='dms-access-for-endpoint',
                     PolicyArn='arn:aws:iam::aws:policy/service-role/AmazonDMSRedshiftS3Role'
                 )
             except Exception as e:
