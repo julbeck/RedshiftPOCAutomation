@@ -3,10 +3,10 @@ Description: 'Amazon Redshift POC resource auto-creation (To be deployed in your
 
 Parameters:
   VpcId:
-    Description: If you want the Redshift cluster to be created in a preexisting VPC, provide the ID of VPC
+    Description: Select the VPC to launch the first staging instance in
     Type: AWS::EC2::VPC::Id
   SubnetId:
-    Description: Select the subnet_id to launch the first staging instance in - ensure it is public and public IPs are auto-assigned
+    Description: Select the subnet to launch the first staging instance in - ensure it is public and public IPs are auto-assigned
     Type: AWS::EC2::Subnet::Id
   ConfigurationFile:
     Description: The location (URI) for the configuration file on S3
@@ -63,13 +63,13 @@ Resources:
       Roles:
       - Ref: RootRole
 
-  SecurityGroupEc2Redshift:
+  SecurityGroupEc2:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupDescription: 'EC2 and Redshift security group'
+      GroupDescription: 'Launching EC2 security group'
       SecurityGroupIngress:
         - CidrIp: !Ref OnPremisesCIDR
-          Description : Allow inbound access for on prem users on Redshift port for the subnet
+          Description : Allow inbound access for on prem users on SSH port for the launching EC2 instance
           IpProtocol: tcp
           FromPort: 22
           IpProtocol: tcp
@@ -82,8 +82,8 @@ Resources:
       Description: Self Referencing Rule
       FromPort: -1
       IpProtocol: -1
-      GroupId: !GetAtt [SecurityGroupEc2Redshift, GroupId]
-      SourceSecurityGroupId: !GetAtt [SecurityGroupEc2Redshift, GroupId]
+      GroupId: !GetAtt [SecurityGroupEc2, GroupId]
+      SourceSecurityGroupId: !GetAtt [SecurityGroupEc2, GroupId]
       ToPort: -1
 
   StagingEC2Instance:
@@ -114,7 +114,7 @@ Resources:
         DeviceIndex: "0"
         SubnetId: !Ref SubnetId
         GroupSet:
-        - Ref: SecurityGroupEc2Redshift
+        - Ref: SecurityGroupEc2
       UserData:
         Fn::Base64: !Sub |
           #!/bin/bash -e
