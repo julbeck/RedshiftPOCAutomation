@@ -26,7 +26,7 @@ class SctOnPremToRedshiftStack(core.Stack):
         source_schema = dmsredshift_config.get('source_schema')
         source_host = dmsredshift_config.get('source_host')
         source_user = dmsredshift_config.get('source_user')
-        # source_pwd = dmsredshift_config.get('source_pwd')
+        source_pwd = dmsredshift_config.get('source_pwd')
         keyname = sctredshift_config.get('key_name')
         s3_bucket_output = sctredshift_config.get('s3_bucket_output')
         source_port = int(dmsredshift_config.get('source_port'))
@@ -36,19 +36,8 @@ class SctOnPremToRedshiftStack(core.Stack):
         redshift_port = cluster.get_cluster_iam_role
         secret_arn = 'RedshiftClusterSecretAA'
         amiID = 'ami-042e0580ee1b9e2af'
-        ##get source password
-        secret_name = "SourceDBPassword"
-        region_name = boto3.session.Session().region_name
 
-        session = boto3.session.Session()
-        client = session.client(
-            service_name='secretsmanager',
-            region_name=region_name,
-        )
-
-        source_pwd = client.get_secret_value(
-                SecretId=secret_name
-            )['SecretString']
+        account_id = boto3.client('sts').get_caller_identity().get('Account')
 
         if source_engine == 'sqlserver':
             source_sct = 'MSSQLDW'
@@ -60,8 +49,35 @@ class SctOnPremToRedshiftStack(core.Stack):
             user_data2 = f.read()
 
         # Instance Role and SSM Managed Policy
-        role = aws_iam.Role(self, "InstanceSSM", assumed_by=aws_iam.ServicePrincipal("ec2.amazonaws.com"))
+        client = boto3.client('iam')
+        role_policy_document = {
+            "Version": "2012-10-17",
+            "Statement": [
+                {
+                    "Effect": "Allow",
+                    "Principal": {
+                        "AWS": "arn:aws:iam::" + account_id + ":root"
+                    },
+                    "Action": "sts:AssumeRole"
+                }
+            ]
+        }
+        client.create_role(
+            RoleName='windows-cli-admin',
+            AssumeRolePolicyDocument=json.dumps(role_policy_document)
+        )
+        client.attach_role_policy(
+            RoleName='windows-cli-admin',
+            PolicyArn='arn:aws:iam::aws:policy/AdministratorAccess'
+        )
 
+        role = aws_iam.Role(self, "WindowsCLIrole", assumed_by=aws_iam.ServicePrincipal("ec2.amazonaws.com"))
+
+        role.add_to_policy(aws_iam.PolicyStatement(
+            actions=["sts:AssumeRole"],
+            resources=["arn:aws:iam::"+account_id+":role/windows-cli-admin"],
+            effect=aws_iam.Effect.ALLOW
+        ))
         role.add_managed_policy(aws_iam.ManagedPolicy.from_aws_managed_policy_name("service-role/AmazonEC2RoleforSSM"))
         role.add_managed_policy(aws_iam.ManagedPolicy.from_aws_managed_policy_name("SecretsManagerReadWrite"))
 
@@ -83,12 +99,10 @@ class SctOnPremToRedshiftStack(core.Stack):
         # my_security_group.add_ingress_rule(my_security_group, aws_ec2.Port.all_tcp(), "self-referencing rule")
         my_security_group=vpc.get_vpc_security_group
 
-        custom_ami = aws_ec2.MachineImage.latest_amazon_linux(
-            generation=aws_ec2.AmazonLinuxGeneration.AMAZON_LINUX_2,
-            edition=aws_ec2.AmazonLinuxEdition.STANDARD,
-            virtualization=aws_ec2.AmazonLinuxVirt.HVM,
-            storage=aws_ec2.AmazonLinuxStorage.GENERAL_PURPOSE
-            )
+        my_security_group.add_ingress_rule(peer=aws_ec2.Peer.any_ipv4(), connection=aws_ec2.Port.tcp(3389),
+                                            description="RDP from anywhere")
+
+        custom_ami = aws_ec2.WindowsImage(aws_ec2.WindowsVersion.WINDOWS_SERVER_2019_ENGLISH_FULL_BASE);
         # Instance
 
         instance = aws_ec2.Instance(self, "Instance",
@@ -97,23 +111,14 @@ class SctOnPremToRedshiftStack(core.Stack):
             vpc = vpc.vpc,
             vpc_subnets=subnet,
             key_name=keyname,
-            role = role,
+            role =role,
             security_group=my_security_group,
 #            resource_signal_timeout=core.Duration.minutes(5),
             user_data=aws_ec2.UserData.custom(user_data)
             )
 
-        sctcommand = 'sh sctrun.sh ' + source_sct + " REDSHIFT " + source_host + " " + str(source_port) + " " + source_db + " " + source_schema + " " + source_user + " " + source_pwd + " " + redshift_host + " 5439 " + redshift_db + " " + redshift_user + " " + 'redshift_pwd'
-        #print(sctcommand)
-        instance.add_user_data(sctcommand)
+        #sctcommand2 = 'aws configure set role_arn arn:aws:iam::396171519679:role/Admin'
+        #instance.add_user_data(sctcommand2)
 
-        instance.add_user_data(user_data2)
-
-        sctcommand2 = 'java -XX:+UseParallelGC --add-opens=java.base/jdk.internal.loader=ALL-UNNAMED --add-exports=java.base/jdk.internal.loader=ALL-UNNAMED --add-exports=java.base/jdk.internal.misc=ALL-UNNAMED -jar "/opt/aws-schema-conversion-tool/lib/app/AWSSchemaConversionToolBatch.jar" -type scts -script sctcliauto.scts'
-        instance.add_user_data(sctcommand2)
-
-        sctcommand3 = 'aws s3 cp /awsutilities/SCT/schemaddl.sql ' + s3_bucket_output
-        instance.add_user_data(sctcommand3)
-
-        sctcommand4 = 'aws s3 cp /awsutilities/SCT/assessmentreport.pdf ' + s3_bucket_output
-        instance.add_user_data(sctcommand4)
+        #sctcommand3 = 'aws configure set credential_source Ec2InstanceMetadata'
+        #instance.add_user_data(sctcommand3)
