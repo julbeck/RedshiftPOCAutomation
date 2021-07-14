@@ -49,7 +49,7 @@ class SctOnPremToRedshiftStack(core.Stack):
         # Instance Role and SSM Managed Policy
         client = boto3.client('iam')
         try:
-            response = client.get_role(RoleName='dms-cloudwatch-logs-role')
+            response = client.get_role(RoleName='windows-cli-admin')
         except:
             try:
                 role_policy_document = {
