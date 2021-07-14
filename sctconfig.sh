@@ -1,17 +1,21 @@
-#!/bin/bash -e
-mkdir /awsutilities
-cd /awsutilities
+<script>
+echo Current date and time >> %SystemRoot%\Temp\test.log
+echo %DATE% %TIME% >> %SystemRoot%\Temp\test.log
+cd c:\
 mkdir SCT
-curl -o aws-schema-conversion-tool-1.0.latest.zip  https://s3.amazonaws.com/publicsctdownload/Fedora/aws-schema-conversion-tool-1.0.latest.zip
-unzip aws-schema-conversion-tool-1.0.latest.zip
-yum -y install aws-schema-conversion-tool-*.rpm
-yum -y install java-11-amazon-corretto
-yum -y install aws-cfn-bootstrap
-mkdir /usr/local/jdbc-drivers
-aws s3 cp s3://event-driven-app-with-lambda-redshift/scripts/mssql-jdbc-7.4.1.jre8.jar /usr/local/jdbc-drivers/mssql-jdbc-7.4.1.jre8.jar
-aws s3 cp s3://event-driven-app-with-lambda-redshift/scripts/redshift-jdbc42-2.0.0.4.jar /usr/local/jdbc-drivers/redshift-jdbc42-2.0.0.4.jar
-chmod 755 /usr/local/jdbc-drivers/*
-aws s3 cp s3://event-driven-app-with-lambda-redshift/scripts/sctcliauto.scts ./sctcliauto.scts
-aws s3 cp s3://event-driven-app-with-lambda-redshift/scripts/sctrun.sh ./sctrun.sh
-pip3 install boto3
-
+cd SCT
+curl -o aws-schema-conversion-tool-1.0.latest.zip  https://s3.amazonaws.com/publicsctdownload/Windows/aws-schema-conversion-tool-1.0.latest.zip
+tar -xf aws-schema-conversion-tool-1.0.latest.zip
+msiexec.exe /i "AWS Schema Conversion Tool-1.0.652.msi" /passive /l log.txt
+curl -o AWSCLIV2.msi https://awscli.amazonaws.com/AWSCLIV2.msi
+msiexec.exe /i "AWSCLIV2.msi" /passive /l logcli.txt
+set PATH="c:\Program Files\Amazon\AWSCLIV2\";%PATH%
+aws configure set role_arn arn:aws:iam::396171519679:role/windows-cli-admin
+aws configure set credential_source Ec2InstanceMetadata
+aws s3 cp s3://event-driven-app-with-lambda-redshift/scripts/sctcliauto.scts sctcliauto.scts
+aws s3 cp s3://event-driven-app-with-lambda-redshift/scripts/sctrun.sh sctrun.sh
+mkdir Drivers
+cd Drivers
+aws s3 cp s3://event-driven-app-with-lambda-redshift/scripts/mssql-jdbc-7.4.1.jre8.jar mssql-jdbc-7.4.1.jre8.jar
+aws s3 cp s3://event-driven-app-with-lambda-redshift/scripts/redshift-jdbc42-2.0.0.4.jar redshift-jdbc42-2.0.0.4.jar
+</script>
