@@ -47,26 +47,30 @@ class SctOnPremToRedshiftStack(core.Stack):
 
         # Instance Role and SSM Managed Policy
         client = boto3.client('iam')
-        role_policy_document = {
-            "Version": "2012-10-17",
-            "Statement": [
-                {
-                    "Effect": "Allow",
-                    "Principal": {
-                        "AWS": "arn:aws:iam::" + account_id + ":root"
-                    },
-                    "Action": "sts:AssumeRole"
+        try:
+            response = client.get_role(RoleName='dms-cloudwatch-logs-role')
+        except:
+            try:
+                role_policy_document = {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Principal": {
+                                "AWS": "arn:aws:iam::" + account_id + ":root"
+                            },
+                            "Action": "sts:AssumeRole"
+                        }
+                    ]
                 }
-            ]
-        }
-        client.create_role(
-            RoleName='windows-cli-admin',
-            AssumeRolePolicyDocument=json.dumps(role_policy_document)
-        )
-        client.attach_role_policy(
-            RoleName='windows-cli-admin',
-            PolicyArn='arn:aws:iam::aws:policy/AdministratorAccess'
-        )
+                client.create_role(
+                    RoleName='windows-cli-admin',
+                    AssumeRolePolicyDocument=json.dumps(role_policy_document)
+                )
+                client.attach_role_policy(
+                    RoleName='windows-cli-admin',
+                    PolicyArn='arn:aws:iam::aws:policy/AdministratorAccess'
+                )
 
         role = aws_iam.Role(self, "WindowsCLIrole", assumed_by=aws_iam.ServicePrincipal("ec2.amazonaws.com"))
 
