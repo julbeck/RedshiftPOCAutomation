@@ -1,5 +1,6 @@
 from aws_cdk import aws_dms
 from aws_cdk import core
+import boto3
 
 class GlobalArgs():
     """
@@ -32,9 +33,22 @@ class DmsOnPremToRedshiftStack(core.Stack):
         source_schema = dmsredshift_config.get('source_schema')
         source_host = dmsredshift_config.get('source_host')
         source_user = dmsredshift_config.get('source_user')
-        source_pwd = dmsredshift_config.get('source_pwd')
+        # source_pwd = dmsredshift_config.get('source_pwd')
         source_port = int(dmsredshift_config.get('source_port'))
         migration_type = dmsredshift_config.get('migration_type')
+
+        secret_name = "SourceDBPassword"
+        region_name = boto3.session.Session().region_name
+
+        session = boto3.session.Session()
+        client = session.client(
+            service_name='secretsmanager',
+            region_name=region_name,
+        )
+
+        source_pwd = client.get_secret_value(
+            SecretId=secret_name
+        )['SecretString']
 
         tablemappings="""{
           "rules": [

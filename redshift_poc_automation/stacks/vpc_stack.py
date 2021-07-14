@@ -1,5 +1,8 @@
 from aws_cdk import aws_ec2
 from aws_cdk import core
+import random
+import string
+
 
 class GlobalArgs():
     """
@@ -54,11 +57,14 @@ class VpcStack(core.Stack):
                 ]
             )
 
+        letters = string.ascii_lowercase
+        tail = ''.join(random.choice(letters) for i in range(5))
+
         self.dms_security_group = aws_ec2.SecurityGroup(
              self,
-             id = "sct-sg-dms",
+             id = "sct-sg-dms-" + tail,
              vpc = self.vpc,
-             security_group_name = "sct-sg-dms",
+             security_group_name = "sct-sg-dms" + tail,
              description = "Gives DMS instance access to Redshift"
         )
         self.dms_security_group.add_ingress_rule(peer=self.dms_security_group, connection=aws_ec2.Port.all_traffic(), description="Self-referencing rule.")
@@ -68,7 +74,7 @@ class VpcStack(core.Stack):
             self,
             "AutomationFrom",
             value=f"{GlobalArgs.SOURCE_INFO}",
-            description="To know more about this automation stack, check out our github page."
+            description="To know more about this automation stack, check out our GitHub page."
         )
         output_1 = core.CfnOutput(
             self,
