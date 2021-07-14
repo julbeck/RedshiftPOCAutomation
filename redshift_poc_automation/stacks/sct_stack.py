@@ -45,6 +45,7 @@ class SctOnPremToRedshiftStack(core.Stack):
         with open("./sctconfig.sh") as f:
             user_data = f.read()
 
+
         # Instance Role and SSM Managed Policy
         client = boto3.client('iam')
         try:
