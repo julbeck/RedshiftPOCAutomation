@@ -54,6 +54,8 @@ class DmsInstanceStack(core.Stack):
             subnet_ids=vpc.get_vpc_public_subnet_ids
          )
 
+        security_group_id = vpc.get_vpc_security_group_id
+
         self.dms_instance = aws_dms.CfnReplicationInstance(
             self,
             "DMSInstance",
@@ -63,7 +65,8 @@ class DmsInstanceStack(core.Stack):
             auto_minor_version_upgrade=None,
             multi_az=False,
             publicly_accessible=True,
-            replication_subnet_group_identifier=dms_subnet_group.ref
+            replication_subnet_group_identifier=dms_subnet_group.ref,
+            vpc_security_group_ids=[security_group_id]
         )
 
     def dms_vpc_role(self):
