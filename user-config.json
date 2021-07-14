@@ -44,7 +44,6 @@
     "source_schema": "dbo",
     "source_host": "ec2-3-86-250-37.compute-1.amazonaws.com",
     "source_user": "awssct",
-    "source_pwd": "Password1",
     "source_port": 1433,
     "migration_type": "cdc"
   },
