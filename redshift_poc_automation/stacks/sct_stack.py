@@ -5,18 +5,19 @@ from aws_cdk import aws_secretsmanager
 import boto3
 import json
 
+
 class SctOnPremToRedshiftStack(core.Stack):
 
     def __init__(
-        self,
-        scope: core.Construct, id: str,
-        cluster,
-        dmsredshift_config: dict,
-        sctredshift_config: dict,
-        redshift_config: dict,
-        vpc,
-        stack_log_level: str,
-        **kwargs
+            self,
+            scope: core.Construct, id: str,
+            cluster,
+            dmsredshift_config: dict,
+            sctredshift_config: dict,
+            redshift_config: dict,
+            vpc,
+            stack_log_level: str,
+            **kwargs
 
     ) -> None:
         super().__init__(scope, id, **kwargs)
@@ -45,49 +46,43 @@ class SctOnPremToRedshiftStack(core.Stack):
         with open("./sctconfig.sh") as f:
             user_data = f.read()
 
-
         # Instance Role and SSM Managed Policy
-        client = boto3.client('iam')
-        try:
-            response = client.get_role(RoleName='dms-cloudwatch-logs-role')
-        except:
-            try:
-                role_policy_document = {
-                    "Version": "2012-10-17",
-                    "Statement": [
-                        {
-                            "Effect": "Allow",
-                            "Principal": {
-                                "AWS": "arn:aws:iam::" + account_id + ":root"
-                            },
-                            "Action": "sts:AssumeRole"
-                        }
-                    ]
+
+        role_policy_document = {
+            "Version": "2012-10-17",
+            "Statement": [
+                {
+                    "Effect": "Allow",
+                    "Principal": {
+                        "AWS": "arn:aws:iam::" + account_id + ":root"
+                    },
+                    "Action": "sts:AssumeRole"
                 }
-                client.create_role(
-                    RoleName='windows-cli-admin',
-                    AssumeRolePolicyDocument=json.dumps(role_policy_document)
-                )
-                client.attach_role_policy(
-                    RoleName='windows-cli-admin',
-                    PolicyArn='arn:aws:iam::aws:policy/AdministratorAccess'
-                )
+            ]
+        }
+        adminrole = aws_iam.Role(
+            self,
+            id='windows-cli-admin',
+            assumed_by=aws_iam.ArnPrincipal("arn:aws:iam::" + account_id + ":root"),
+            role_name='windows-cli-admin'
+        )
+        adminrole.add_managed_policy(aws_iam.ManagedPolicy.from_aws_managed_policy_name("AdministratorAccess"))
 
         role = aws_iam.Role(self, "WindowsCLIrole", assumed_by=aws_iam.ServicePrincipal("ec2.amazonaws.com"))
 
         role.add_to_policy(aws_iam.PolicyStatement(
             actions=["sts:AssumeRole"],
-            resources=["arn:aws:iam::"+account_id+":role/windows-cli-admin"],
+            resources=["arn:aws:iam::" + account_id + ":role/windows-cli-admin"],
             effect=aws_iam.Effect.ALLOW
         ))
         role.add_managed_policy(aws_iam.ManagedPolicy.from_aws_managed_policy_name("service-role/AmazonEC2RoleforSSM"))
         role.add_managed_policy(aws_iam.ManagedPolicy.from_aws_managed_policy_name("SecretsManagerReadWrite"))
 
-        #secrets_client = boto3.client(service_name='secretsmanager', region_name='us-east-1')
-        #get_secret_value_response = secrets_client.get_secret_value(
+        # secrets_client = boto3.client(service_name='secretsmanager', region_name='us-east-1')
+        # get_secret_value_response = secrets_client.get_secret_value(
         #    SecretId=secret_arn
-        #)
-        #redshift_pwd = [value for value in get_secret_value_response.values()][3]
+        # )
+        # redshift_pwd = [value for value in get_secret_value_response.values()][3]
 
         ### TAKE THIS OUT SO THAT INSTANCE IS NOT PUBLIC ###
         subnet = aws_ec2.SubnetSelection(subnet_type=aws_ec2.SubnetType('PUBLIC'))
@@ -99,28 +94,28 @@ class SctOnPremToRedshiftStack(core.Stack):
         #                                       )
         # my_security_group.add_ingress_rule(aws_ec2.Peer.any_ipv4(), aws_ec2.Port.tcp(22), "allow ssh access from the world")
         # my_security_group.add_ingress_rule(my_security_group, aws_ec2.Port.all_tcp(), "self-referencing rule")
-        my_security_group=vpc.get_vpc_security_group
+        my_security_group = vpc.get_vpc_security_group
 
         my_security_group.add_ingress_rule(peer=aws_ec2.Peer.any_ipv4(), connection=aws_ec2.Port.tcp(3389),
-                                            description="RDP from anywhere")
+                                           description="RDP from anywhere")
 
         custom_ami = aws_ec2.WindowsImage(aws_ec2.WindowsVersion.WINDOWS_SERVER_2019_ENGLISH_FULL_BASE);
         # Instance
 
         instance = aws_ec2.Instance(self, "Instance",
-            instance_type=aws_ec2.InstanceType("m5.large"),
-            machine_image=custom_ami,
-            vpc = vpc.vpc,
-            vpc_subnets=subnet,
-            key_name=keyname,
-            role =role,
-            security_group=my_security_group,
-#            resource_signal_timeout=core.Duration.minutes(5),
-            user_data=aws_ec2.UserData.custom(user_data)
-            )
+                                    instance_type=aws_ec2.InstanceType("m5.large"),
+                                    machine_image=custom_ami,
+                                    vpc=vpc.vpc,
+                                    vpc_subnets=subnet,
+                                    key_name=keyname,
+                                    role=role,
+                                    security_group=my_security_group,
+                                    #            resource_signal_timeout=core.Duration.minutes(5),
+                                    user_data=aws_ec2.UserData.custom(user_data)
+                                    )
 
-        #sctcommand2 = 'aws configure set role_arn arn:aws:iam::396171519679:role/Admin'
-        #instance.add_user_data(sctcommand2)
+        # sctcommand2 = 'aws configure set role_arn arn:aws:iam::396171519679:role/Admin'
+        # instance.add_user_data(sctcommand2)
 
-        #sctcommand3 = 'aws configure set credential_source Ec2InstanceMetadata'
-        #instance.add_user_data(sctcommand3)
+        # sctcommand3 = 'aws configure set credential_source Ec2InstanceMetadata'
+        # instance.add_user_data(sctcommand3)
