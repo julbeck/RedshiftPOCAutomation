@@ -72,7 +72,7 @@ class SctOnPremToRedshiftStack(core.Stack):
 
         role.add_to_policy(aws_iam.PolicyStatement(
             actions=["sts:AssumeRole"],
-            resources=["arn:aws:iam::" + account_id + ":role/windows-cli-admin"],
+            resources=["arn:aws:iam::" + account_id + ":role/windows-cli-role"],
             effect=aws_iam.Effect.ALLOW
         ))
         role.add_managed_policy(aws_iam.ManagedPolicy.from_aws_managed_policy_name("service-role/AmazonEC2RoleforSSM"))
