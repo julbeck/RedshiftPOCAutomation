@@ -46,6 +46,8 @@ class SctOnPremToRedshiftStack(core.Stack):
         with open("./sctconfig.sh") as f:
             user_data = f.read()
 
+        with open("./sctconfig2.sh") as f:
+            user_data2 = f.read()
         # Instance Role and SSM Managed Policy
 
         role_policy_document = {
@@ -114,8 +116,7 @@ class SctOnPremToRedshiftStack(core.Stack):
                                     user_data=aws_ec2.UserData.custom(user_data)
                                     )
 
-        # sctcommand2 = 'aws configure set role_arn arn:aws:iam::396171519679:role/Admin'
-        # instance.add_user_data(sctcommand2)
+        sctcommand2 = 'set PATH="c:\Program Files\Amazon\AWSCLIV2\";%PATH% \n aws configure set role_arn arn:aws:iam::' + account_id + ':role/Admin'
+        instance.add_user_data(sctcommand2)
 
-        # sctcommand3 = 'aws configure set credential_source Ec2InstanceMetadata'
-        # instance.add_user_data(sctcommand3)
+        instance.add_user_data(user_data2)
