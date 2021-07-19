@@ -116,7 +116,10 @@ class SctOnPremToRedshiftStack(core.Stack):
                                     user_data=aws_ec2.UserData.custom(user_data)
                                     )
 
-        sctcommand2 = 'set PATH="c:\Program Files\Amazon\AWSCLIV2\";%PATH% \n aws configure set role_arn arn:aws:iam::' + account_id + ':role/Admin'
+        sctcommand2 = '<script>set PATH="c:\Program Files\Amazon\AWSCLIV2\";%PATH%</script>'
+        sctcommand3 = '<script>aws configure set role_arn arn:aws:iam::' + account_id + ':role/Admin</script>'
         instance.add_user_data(sctcommand2)
+        instance.add_user_data(sctcommand3)
+
 
         instance.add_user_data(user_data2)
