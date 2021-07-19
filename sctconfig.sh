@@ -11,7 +11,7 @@ msiexec.exe /i "AWS Schema Conversion Tool-1.0.652.msi" /passive /l log.txt
 curl -o AWSCLIV2.msi https://awscli.amazonaws.com/AWSCLIV2.msi
 msiexec.exe /i "AWSCLIV2.msi" /passive /l logcli.txt
 set PATH="c:\Program Files\Amazon\AWSCLIV2\";%PATH%
-aws configure set role_arn arn:aws:iam::396171519679:role/windows-cli-role
+aws configure set role_arn arn:aws:iam::962393875414:role/windows-cli-role
 aws configure set credential_source Ec2InstanceMetadata
 aws s3 cp s3://event-driven-app-with-lambda-redshift/scripts/sctcliauto.scts sctcliauto.scts
 aws s3 cp s3://event-driven-app-with-lambda-redshift/scripts/sctrun.sh sctrun.sh
