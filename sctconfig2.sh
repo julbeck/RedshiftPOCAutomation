@@ -1,4 +1,3 @@
-
 <script>
 set PATH="c:\Program Files\Amazon\AWSCLIV2\";%PATH%
 aws configure set credential_source Ec2InstanceMetadata
