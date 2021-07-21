@@ -48,6 +48,7 @@ class SctOnPremToRedshiftStack(core.Stack):
 
         with open("./sctconfig_2.sh") as f_2:
             user_data_2 = f_2.read()
+
         # Instance Role and SSM Managed Policy
 
         role_policy_document = {
@@ -112,7 +113,7 @@ class SctOnPremToRedshiftStack(core.Stack):
                                     vpc_subnets=subnet,
                                     key_name=keyname,
                                     role=role,
-                                    security_group=my_security_group,
+                                    security_group=my_security_group
                                     #            resource_signal_timeout=core.Duration.minutes(5),
                                     user_data=aws_ec2.UserData.custom(input_data)
                                     )
@@ -121,7 +122,7 @@ class SctOnPremToRedshiftStack(core.Stack):
         #testcommand = aws_ec2.UserData.for_windows()
         #testcommand.add_commands(firstcommand)
         #instance.user_data.add_commands(testcommand.render())
-
+        
         #secondcommand = '<script>' + '\n' + 'mkdir -p C:/SCTSECOND' + '\n' + '</script>'
         #scriptcommand = aws_ec2.UserData.for_windows()
         #scriptcommand.add_commands(secondcommand)
