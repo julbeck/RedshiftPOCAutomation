@@ -46,6 +46,8 @@ class SctOnPremToRedshiftStack(core.Stack):
         with open("./sctconfig.sh") as f:
             user_data = f.read()
 
+        with open("./sctconfig2.sh") as f:
+            user_data2 = f.read()
         # Instance Role and SSM Managed Policy
 
         role_policy_document = {
@@ -62,17 +64,17 @@ class SctOnPremToRedshiftStack(core.Stack):
         }
         adminrole = aws_iam.Role(
             self,
-            id='windows-cli-admin',
+            id='windows-cli-role',
             assumed_by=aws_iam.ArnPrincipal("arn:aws:iam::" + account_id + ":root"),
-            role_name='windows-cli-admin'
+            role_name='windows-cli-role'
         )
-        adminrole.add_managed_policy(aws_iam.ManagedPolicy.from_aws_managed_policy_name("AdministratorAccess"))
+        adminrole.add_managed_policy(aws_iam.ManagedPolicy.from_aws_managed_policy_name("AmazonS3FullAccess"))
 
         role = aws_iam.Role(self, "WindowsCLIrole", assumed_by=aws_iam.ServicePrincipal("ec2.amazonaws.com"))
 
         role.add_to_policy(aws_iam.PolicyStatement(
             actions=["sts:AssumeRole"],
-            resources=["arn:aws:iam::" + account_id + ":role/windows-cli-admin"],
+            resources=["arn:aws:iam::" + account_id + ":role/windows-cli-role"],
             effect=aws_iam.Effect.ALLOW
         ))
         role.add_managed_policy(aws_iam.ManagedPolicy.from_aws_managed_policy_name("service-role/AmazonEC2RoleforSSM"))
@@ -109,13 +111,17 @@ class SctOnPremToRedshiftStack(core.Stack):
                                     vpc_subnets=subnet,
                                     key_name=keyname,
                                     role=role,
-                                    security_group=my_security_group,
+                                    security_group=my_security_group
                                     #            resource_signal_timeout=core.Duration.minutes(5),
-                                    user_data=aws_ec2.UserData.custom(user_data)
+                                    #user_data=aws_ec2.UserData.custom(user_data)
                                     )
+        firstcommand = '<script>' + '\n' + 'mkdir -p C:/SCTFIRST' + '\n' + 'mkdir -p C:/SCTSECOND' + '\n' + '</script>'
+        #sctcommand = '<script>' + '\n' + 'set PATH="c:\Program Files\Amazon\AWSCLIV2\";%PATH%' + '\n' + '</script>';
+        testcommand = aws_ec2.UserData.for_windows()
+        testcommand.add_commands(firstcommand)
+        instance.user_data.add_commands(testcommand.render())
 
-        # sctcommand2 = 'aws configure set role_arn arn:aws:iam::396171519679:role/Admin'
-        # instance.add_user_data(sctcommand2)
-
-        # sctcommand3 = 'aws configure set credential_source Ec2InstanceMetadata'
-        # instance.add_user_data(sctcommand3)
+        #secondcommand = '<script>' + '\n' + 'mkdir -p C:/SCTSECOND' + '\n' + '</script>'
+        #scriptcommand = aws_ec2.UserData.for_windows()
+        #scriptcommand.add_commands(secondcommand)
+        #instance.user_data.add_commands(scriptcommand.render())
