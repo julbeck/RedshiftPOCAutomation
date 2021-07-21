@@ -103,7 +103,7 @@ class SctOnPremToRedshiftStack(core.Stack):
 
         custom_ami = aws_ec2.WindowsImage(aws_ec2.WindowsVersion.WINDOWS_SERVER_2019_ENGLISH_FULL_BASE);
         # Instance
-        firstcommand = "\naws configure set role_arn arn:aws:iam::" + account_id + ":role/windows-cli-admin\n"
+        firstcommand = "\naws configure set role_arn arn:aws:iam::" + account_id + ":role/windows-cli-role\n"
         input_data = user_data + firstcommand + user_data_2
         instance = aws_ec2.Instance(self, "Instance",
                                     instance_type=aws_ec2.InstanceType("m5.large"),
