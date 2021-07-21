@@ -111,15 +111,17 @@ class SctOnPremToRedshiftStack(core.Stack):
                                     vpc_subnets=subnet,
                                     key_name=keyname,
                                     role=role,
-                                    security_group=my_security_group,
+                                    security_group=my_security_group
                                     #            resource_signal_timeout=core.Duration.minutes(5),
-                                    user_data=aws_ec2.UserData.custom(user_data)
+                                    #user_data=aws_ec2.UserData.custom(user_data)
                                     )
+        firstcommand = '<script>' + '\n' + 'mkdir -p C:/SCTFIRST' + '\n' + 'mkdir -p C:/SCTSECOND' + '\n' + '</script>'
+        #sctcommand = '<script>' + '\n' + 'set PATH="c:\Program Files\Amazon\AWSCLIV2\";%PATH%' + '\n' + '</script>';
+        testcommand = aws_ec2.UserData.for_windows()
+        testcommand.add_commands(firstcommand)
+        instance.user_data.add_commands(testcommand.render())
 
-        sctcommand2 = '<script>set PATH="c:\Program Files\Amazon\AWSCLIV2\";%PATH%</script>'
-        sctcommand3 = '<script>aws configure set role_arn arn:aws:iam::' + account_id + ':role/windows-cli-role</script>'
-        instance.add_user_data(sctcommand2)
-        instance.add_user_data(sctcommand3)
-
-
-        instance.add_user_data(user_data2)
+        #secondcommand = '<script>' + '\n' + 'mkdir -p C:/SCTSECOND' + '\n' + '</script>'
+        #scriptcommand = aws_ec2.UserData.for_windows()
+        #scriptcommand.add_commands(secondcommand)
+        #instance.user_data.add_commands(scriptcommand.render())
