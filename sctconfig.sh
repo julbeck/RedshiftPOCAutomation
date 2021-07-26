@@ -8,4 +8,5 @@ curl -o aws-schema-conversion-tool-1.0.latest.zip  https://s3.amazonaws.com/publ
 tar -xf aws-schema-conversion-tool-1.0.latest.zip
 msiexec.exe /i "AWS Schema Conversion Tool-1.0.652.msi" /passive /l log.txt
 curl -o AWSCLIV2.msi https://awscli.amazonaws.com/AWSCLIV2.msi
-</script>
+msiexec.exe /i "AWSCLIV2.msi" /passive /l logcli.txt
+set PATH="c:\Program Files\Amazon\AWSCLIV2\";%PATH%

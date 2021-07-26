@@ -46,8 +46,9 @@ class SctOnPremToRedshiftStack(core.Stack):
         with open("./sctconfig.sh") as f:
             user_data = f.read()
 
-        with open("./sctconfig2.sh") as f:
-            user_data2 = f.read()
+        with open("./sctconfig_2.sh") as f_2:
+            user_data_2 = f_2.read()
+
         # Instance Role and SSM Managed Policy
 
         role_policy_document = {
@@ -103,7 +104,8 @@ class SctOnPremToRedshiftStack(core.Stack):
 
         custom_ami = aws_ec2.WindowsImage(aws_ec2.WindowsVersion.WINDOWS_SERVER_2019_ENGLISH_FULL_BASE);
         # Instance
-
+        firstcommand = "\naws configure set role_arn arn:aws:iam::" + account_id + ":role/windows-cli-role\n"
+        input_data = user_data + firstcommand + user_data_2
         instance = aws_ec2.Instance(self, "Instance",
                                     instance_type=aws_ec2.InstanceType("m5.large"),
                                     machine_image=custom_ami,
@@ -111,7 +113,7 @@ class SctOnPremToRedshiftStack(core.Stack):
                                     vpc_subnets=subnet,
                                     key_name=keyname,
                                     role=role,
-                                    security_group=my_security_group
+                                    security_group=my_security_group,
                                     #            resource_signal_timeout=core.Duration.minutes(5),
-                                    #user_data=aws_ec2.UserData.custom(user_data)
+                                    user_data=aws_ec2.UserData.custom(input_data)
                                     )
