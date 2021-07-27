@@ -40,6 +40,18 @@ Resources:
       Description: 'Credentials for source database in Redshift demo'
       SecretString: !Sub ${SourceDBPassword}
 
+  DMSFullAccessAAA: 
+    Type: AWS::IAM::ManagedPolicy
+    Properties: 
+      Description: Policy for creating DMS resources
+      Path: /
+      PolicyDocument: 
+        Version: "2012-10-17"
+        Statement: 
+          - Effect: Allow
+            Action: "dms:*"
+            Resource: "*"
+
   RootRole:
     Type: 'AWS::IAM::Role'
     Properties:
@@ -54,7 +66,14 @@ Resources:
               - 'sts:AssumeRole'
       Path: /
       ManagedPolicyArns:
-        - "arn:aws:iam::aws:policy/AdministratorAccess"
+        - "arn:aws:iam::aws:policy/IAMFullAccess"
+        - "arn:aws:iam::aws:policy/AWSCloudFormationFullAccess"
+        - "arn:aws:iam::aws:policy/AmazonSSMFullAccess"
+        - "arn:aws:iam::aws:policy/AmazonRedshiftFullAccess"
+        - "arn:aws:iam::aws:policy/AmazonS3FullAccess"
+        - "arn:aws:iam::aws:policy/SecretsManagerReadWrite"
+        - "arn:aws:iam::aws:policy/AmazonEC2FullAccess"
+        - Ref: DMSFullAccessAAA
 
   InstanceProfileEC2Instance:
     Type: AWS::IAM::InstanceProfile
