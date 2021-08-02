@@ -38,7 +38,7 @@ An option for provisioning the VPC is to use the [VPC Launch Wizard console](htt
 1. Open the VPC Launch Wizard console linked above, change to desired region, and press **Select**
 2. Configure your desired VPC size, VPC name, subnet size, and subnet name -- other values can be kept as default. Example:
 
-	![Example](https://github.com/julbeck/RedshiftPOCAutomation/blob/master/Screen%20Shot%202021-08-02%20at%2017.29.57.png)
+	![Example](https://github.com/julbeck/RedshiftPOCAutomation/blob/master/Screen%20Shot%202021-08-02%20at%2017.36.05.png)
 
 	2. Minimum VPC size: 
 	2. Minimum subnet size:
