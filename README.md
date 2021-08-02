@@ -1,65 +1,43 @@
 
-# Welcome to your CDK Python project!
+#AWS Redshift Infrastructure Automation
 
-You should explore the contents of this project. It demonstrates a CDK app with an instance of a stack (`redshift_poc_automation_stack`)
-which contains an Amazon SQS queue that is subscribed to an Amazon SNS topic.
+##Table of Contents
 
-The `cdk.json` file tells the CDK Toolkit how to execute your app.
+1. [Introduction](#overview-of-deployment)
+1. [Prerequisites](#prerequisites)
+1. [Deployment Steps](#deployment-steps)
+	1. [Configuring the config file](#configuring-the-config-file)
+	1. [Launcing the staging template](#launching-the-staging-template)
+1. [Troubleshooting](#troubleshooting)
 
-This project is set up like a standard Python project.  The initialization process also creates
-a virtualenv within this project, stored under the .venv directory.  To create the virtualenv
-it assumes that there is a `python3` executable in your path with access to the `venv` package.
-If for any reason the automatic creation of the virtualenv fails, you can create the virtualenv
-manually once the init process completes.
+##Overview of Deployment
 
-To manually create a virtualenv on MacOS and Linux:
+This project consists of a two-phase deployment: the staging infrastructure, and the target infrastructure. The target infrastructure is the end-goal configuration of AWS analytics services which are needed for a POC or other use case. The staging infrastructure will launch an EC2 instance to run a CDK application which will provision the resources of this target infrastructure. 
 
-```
-$ python3 -m venv .venv
-```
+To achieve this, a JSON-formatted config file specifying the desired service configurations needs to be uploaded to an S3 bucket. The location of this file in S3 is used as a parameter in the CloudFormation stack, alongside further details of the staging infrastructure. Once the CloudFormation stack is launched, the resources are provisioned automatically.
 
-After the init process completes and the virtualenv is created, you can use the following
-step to activate your virtualenv.
+Here you can see a diagram giving an overview of this flow:
 
-```
-$ source .venv/bin/activate
-```
+![Architecture Flow](https://github.com/julbeck/RedshiftPOCAutomation/blob/390b0a58b26e3220140de40a22d6b4723185cea1/Architecture_Flow.pdf)
 
-If you are a Windows platform, you would activate the virtualenv like this:
+The following sections give further details of how to complete these steps.
 
-```
-% .venv\Scripts\activate.bat
-```
+##Prerequisites
 
-Once the virtualenv is activated, you can install the required dependencies.
 
-```
-$ pip install -r requirements.txt
-```
+##Deployment-Steps
 
-At this point you can now synthesize the CloudFormation template for this code.
+###Configuring the config file
 
-```
-$ cdk synth
-```
+###Launching the staging template
 
-You can now begin exploring the source code, contained in the hello directory.
-There is also a very trivial test included that can be run like this:
+##Troubleshooting
 
-```
-$ pytest
-```
+## Security
 
-To add additional dependencies, for example other CDK libraries, just add to
-your requirements.txt file and rerun the `pip install -r requirements.txt`
-command.
+See [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) for more information.
 
-## Useful commands
+## License
 
- * `cdk ls`          list all stacks in the app
- * `cdk synth`       emits the synthesized CloudFormation template
- * `cdk deploy`      deploy this stack to your default AWS account/region
- * `cdk diff`        compare deployed stack with current state
- * `cdk docs`        open CDK documentation
+This library is licensed under the MIT-0 License. See the LICENSE file.
 
-Enjoy!
