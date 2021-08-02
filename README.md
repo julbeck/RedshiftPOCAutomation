@@ -30,6 +30,8 @@ In order to run the staging stack, some resources need to be preconfigured:
 * A VPC containing a public subnet that has IPv4 auto-assign enabled -- if either of these aren't configured please see [launching a VPC](#launching-a-vpc) and [auto-assigning public IPv4 addresses](#auto-assigning-public-ipv4-addresses) below
 * If using DMS or SCT, opening source firewalls/ security groups to allow for traffic from AWS
 
+If these are complete, continue to [deployment steps](#deployment-steps).
+
 ### Launching a VPC
 
 An option for provisioning the VPC is to use the [VPC Launch Wizard console](https://console.aws.amazon.com/vpc/home?region=us-east-1#wizardSelector:) -- you can see the details of the infrastructure launched using this wizard [here](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Scenario1.html)
