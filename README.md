@@ -63,9 +63,9 @@ To ensure instances launched in this subnet will be auto-assigned public IPv4 ad
 
 ## Deployment Steps
 
-### Configuring the config file
+### Configure the config file
 
-### Launching the staging template
+### Launch the staging template
 
 ## Troubleshooting
 
