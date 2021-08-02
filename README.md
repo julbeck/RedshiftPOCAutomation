@@ -1,7 +1,7 @@
 
-#AWS Redshift Infrastructure Automation
+# AWS Redshift Infrastructure Automation
 
-##Table of Contents
+## Table of Contents
 
 1. [Introduction](#overview-of-deployment)
 1. [Prerequisites](#prerequisites)
@@ -10,7 +10,7 @@
 	1. [Launcing the staging template](#launching-the-staging-template)
 1. [Troubleshooting](#troubleshooting)
 
-##Overview of Deployment
+## Overview of Deployment
 
 This project consists of a two-phase deployment: the staging infrastructure, and the target infrastructure. The target infrastructure is the end-goal configuration of AWS analytics services which are needed for a POC or other use case. The staging infrastructure will launch an EC2 instance to run a CDK application which will provision the resources of this target infrastructure. 
 
@@ -22,16 +22,16 @@ Here you can see a diagram giving an overview of this flow:
 
 The following sections give further details of how to complete these steps.
 
-##Prerequisites
+## Prerequisites
 
 
-##Deployment-Steps
+## Deployment-Steps
 
-###Configuring the config file
+### Configuring the config file
 
-###Launching the staging template
+### Launching the staging template
 
-##Troubleshooting
+## Troubleshooting
 
 ## Security
 
