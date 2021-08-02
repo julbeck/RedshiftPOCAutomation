@@ -47,7 +47,7 @@ An option for provisioning the VPC is to use the [VPC Launch Wizard console](htt
 ### Auto-assigning public IPv4 addresses
 
 To ensure instances launched in this subnet will be auto-assigned public IPv4 addresses, 
-1. Navigate to the **Subnets** tab in the VPC console -- select the subnet you intend to use for your staging infrastructure, and under details, see whether the "Auto-assign public IPv4 address" value is Yes or No
+1. Navigate to the **Subnets** tab in the VPC console -- select the subnet you intend to use for your staging infrastructure (i.e. the subnet name created with the launch wizard above), and under details, see whether the "Auto-assign public IPv4 address" value is Yes or No
 
 	![Autoassign](https://github.com/julbeck/RedshiftPOCAutomation/blob/master/Screen%20Shot%202021-08-02%20at%2017.19.11.png)
 
