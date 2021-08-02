@@ -8,8 +8,8 @@
 	1. [Launching a VPC](#launching-a-vpc)
 	1. [Auto-assigning public IPv4 addresses](#auto-assigning-public-ipv4-addresses)
 1. [Deployment Steps](#deployment-steps)
-	1. [Configuring the config file](#configuring-the-config-file)
-	1. [Launcing the staging template](#launching-the-staging-template)
+	1. [Configure the config file](#configure-the-config-file)
+	1. [Launch the staging template](#launch-the-staging-template)
 1. [Troubleshooting](#troubleshooting)
 
 ## Overview of Deployment
