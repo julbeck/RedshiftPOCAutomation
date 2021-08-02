@@ -30,22 +30,22 @@ In order to run the staging stack, some resources need to be preconfigured:
 1. Open the VPC Launch Wizard console linked above, change to desired region, and press **Select**
 2. Configure your desired VPC size, VPC name, subnet size, and subnet name -- other values can be kept as default. Example:
 
-		![Example](https://github.com/julbeck/RedshiftPOCAutomation/blob/master/Screen%20Shot%202021-08-02%20at%2017.13.05.png)
+	![Example](https://github.com/julbeck/RedshiftPOCAutomation/blob/master/Screen%20Shot%202021-08-02%20at%2017.13.05.png)
 
 	2. Minimum VPC size: 
 	2. Minimum subnet size:
 3. Press **Create VPC**
 	* To ensure instances launched in this subnet will be auto-assigned public IPv4 addresses, navigate to the **Subnets** tab in the VPC console -- select the subnet you intend to use for your staging infrastructure, and under details, see whether the "Auto-assign public IPv4 address" value is Yes or No.
 
-		![Autoassign](https://github.com/julbeck/RedshiftPOCAutomation/blob/master/Screen%20Shot%202021-08-02%20at%2017.19.11.png)
+	![Autoassign](https://github.com/julbeck/RedshiftPOCAutomation/blob/master/Screen%20Shot%202021-08-02%20at%2017.19.11.png)
 
 	If the value is No, select **Actions** > **Modify auto-assign IP settings**
 
-		![Modify](https://github.com/julbeck/RedshiftPOCAutomation/blob/master/Screen%20Shot%202021-08-02%20at%2017.20.41.png)
+	![Modify](https://github.com/julbeck/RedshiftPOCAutomation/blob/master/Screen%20Shot%202021-08-02%20at%2017.20.41.png)
 
 	then select the "Enable auto-assign public IPv4 address" checkbox
 
-		![Checkbox](https://github.com/julbeck/RedshiftPOCAutomation/blob/master/Screen%20Shot%202021-08-02%20at%2017.22.36.png)
+	![Checkbox](https://github.com/julbeck/RedshiftPOCAutomation/blob/master/Screen%20Shot%202021-08-02%20at%2017.22.36.png)
 	
 	Press **Save**
 
