@@ -63,6 +63,8 @@ To ensure instances launched in this subnet will be auto-assigned public IPv4 ad
 
 ## Deployment Steps
 
+In order to launch the staging and target infrastructures, download the [user-config-template.json](https://github.com/aws-samples/amazon-redshift-infrastructure-automation) file and the [CDKstaging.yaml](https://github.com/aws-samples/amazon-redshift-infrastructure-automation/blob/main/CDKstaging.yaml) file in this repo.
+
 ### Configure the config file
 
 ### Launch the staging template
