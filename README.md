@@ -25,7 +25,7 @@ The following sections give further details of how to complete these steps.
 ## Prerequisites
 
 
-## Deployment-Steps
+## Deployment Steps
 
 ### Configuring the config file
 
