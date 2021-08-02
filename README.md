@@ -18,7 +18,7 @@ To achieve this, a JSON-formatted config file specifying the desired service con
 
 Here you can see a diagram giving an overview of this flow:
 
-![Architecture Flow](https://github.com/julbeck/RedshiftPOCAutomation/blob/390b0a58b26e3220140de40a22d6b4723185cea1/Architecture_Flow.pdf)
+![Architecture Flow](https://github.com/julbeck/RedshiftPOCAutomation/blob/390b0a58b26e3220140de40a22d6b4723185cea1/Architecture_Flow.png)
 
 The following sections give further details of how to complete these steps.
 
