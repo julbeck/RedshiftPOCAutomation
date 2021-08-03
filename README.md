@@ -36,10 +36,7 @@ If these are complete, continue to [deployment steps](#deployment-steps).
 
 An option for provisioning the VPC is to use the [VPC Launch Wizard console](https://console.aws.amazon.com/vpc/home?region=us-east-1#wizardSelector:) -- you can see the details of the infrastructure launched using this wizard [here](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Scenario1.html)
 1. Open the VPC Launch Wizard console linked above, change to desired region, and press **Select**
-2. Configure your desired VPC size, VPC name, subnet size, and subnet name -- other values can be kept as default. Example:
-
-	![Example](https://github.com/julbeck/RedshiftPOCAutomation/blob/master/Screen%20Shot%202021-08-02%20at%2017.36.05.png)
-
+2. Configure your desired VPC size, VPC name, subnet size, and subnet name -- other values can be kept as default.
 	2. Minimum VPC size: 
 	2. Minimum subnet size:
 3. Press **Create VPC**
