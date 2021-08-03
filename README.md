@@ -139,9 +139,6 @@ In the case that the template stall, logs of CloudFormation/CDK events and error
 	| us-west-2 | 18.237.140.160/29 |
 4. Run `sudo tail -35f /var/log/cloud-init-output.log` to access the logs
 
-If any additional issues arise, please notify us using the [Issues tab](https://github.com/aws-samples/amazon-redshift-infrastructure-automation/issues).
-
-
 ## Security
 
 See [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) for more information.
