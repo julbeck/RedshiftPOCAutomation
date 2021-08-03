@@ -64,11 +64,11 @@ To ensure instances launched in this subnet will be auto-assigned public IPv4 ad
 
 ## Deployment Steps
 
-In order to launch the staging and target infrastructures, download the [user-config-template.json](https://github.com/aws-samples/amazon-redshift-infrastructure-automation) file and the [CDKstaging.yaml](https://github.com/aws-samples/amazon-redshift-infrastructure-automation/blob/main/CDKstaging.yaml) file in this repo. 
+In order to launch the staging and target infrastructures, download the [user-config-template.json](https://github.com/julbeck/RedshiftPOCAutomation/blob/master/user-config-template.json) file and the [CDKstaging.yaml](https://github.com/aws-samples/amazon-redshift-infrastructure-automation/blob/main/CDKstaging.yaml) file in this repo. 
 
 ### Configure the config file
 
-The structure of the config file has two parts: (1) a list of key-value pairs, which create a mapping between a specific service and whether it should be launched in the target infrastructure, and (2) configurations for the service that are launched in the target infrastructure.
+The structure of the config file has two parts: (1) a list of key-value pairs, which create a mapping between a specific service and whether it should be launched in the target infrastructure, and (2) configurations for the service that are launched in the target infrastructure. Open the [user-config-template.json](https://github.com/julbeck/RedshiftPOCAutomation/blob/master/user-config-template.json) file and replace the values for the Service Keys in the first section with the appropriate  Launch Value defined in the table below. If you're looking to create a resource, use the corresponding Configuration in the second section.
 
 
 | Service Key | Launch Values | Configuration | Description |
@@ -79,7 +79,35 @@ The structure of the config file has two parts: (1) a list of key-value pairs, w
 | `dms_on_prem_to_redshift_target` | `CREATE`, `N/A` | *Can only CREATE if are also creating DMS instance and Redshift cluster.*<br>In case of `CREATE`, configure `dms_on_prem_to_redshift`:<br>`source_db`: Name of source database to migrate<br>`source_engine`: Engine type of the source<br>`source_schema`: Name of source schema to migrate<br>`source_host`: DNS endpoint of the source<br>`source_user`: Username of the database to migrate<br>`source_port`: [INT] Port to connect to connect on<br>`migration_type`: `full-load`, `cdc`, or `full-load-and-cdc` | Creates a migration task and migration endpoints between a source and Redshift configured above. |
 | `sct_on_prem_to_redshift_target` | `CREATE`, `N/A` | *Can only CREATE if are also creating Redshift cluster.*<br>In case of `CREATE`, uses configuration from `dms_on_prem_to_redshift` (see above) and `sct_on_prem_to_redshift`:<br>`key_name`: EC2 key pair name to be used for EC2 running SCT<br>`s3_bucket_output`: S3 bucket to be used for SCT artifacts | Launches an EC2 instance and installs SCT to be used for schema conversion. |
 
+
+You can see an example of a completed config file under [user-config-sample.json](https://github.com/julbeck/RedshiftPOCAutomation/blob/master/user-config-sample.json).
+
+Once all appropriate Launch Values and Configurations have been defined, upload the config file to an S3 bucket.
+
 ### Launch the staging template
+
+1. Open the [CloudFormation console](https://console.aws.amazon.com/cloudformation/) and under **Create stack** select **With new resources (standard)**
+2. Select **Upload a template file** under **Specify template** and choose the downloaded [CDKstaging.yaml](https://github.com/aws-samples/amazon-redshift-infrastructure-automation/blob/main/CDKstaging.yaml) file, then press **Next**
+3. Fill in the fields with the following values:
+	| Field Name | Value |
+	| ---------- | ----- |
+	| Stack name | A name to be used for the launched CloudFormation stacks |
+	| ConfigurationFile | The URI of the config file uploaded to S3 in the previous section |
+	| EC2InstanceAMI | The AMI to be used for the staging instance -- do not change unless need to for compliance requirements |
+	| KeyPair | Select the key pair in your account to be used to SSH into the staging instance |
+	| OnPremisesCIDR | The CIDR to be used to SSH into the staging instance |
+	| SourceDBPassword | Password of the source database |
+	| SubnetID | Select the public subnet with IPv4 auto-assign enabled from the prerequisites |
+	| VpcId | Select the VPC of the selected subnet |
+	An example:
+
+	![Example](https://github.com/julbeck/RedshiftPOCAutomation/blob/master/Screen%20Shot%202021-08-03%20at%2011.13.48.png)
+
+	Press **Next**
+4. To make troubleshooting easier, under **Stack creation options**, select *Disabled* under "Rollback on failure" -- press **Next**
+5. At the bottom of the page, select the IAM acknowledgment and press **Create stack** to launch the stack
+
+At this point the launch will be initiated. Please see troubleshooting below if the stack launch stalls at any point.
 
 ## Troubleshooting
 
