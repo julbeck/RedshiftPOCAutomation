@@ -93,8 +93,8 @@ Once all appropriate Launch Values and Configurations have been defined, upload 
 	| EC2 AMI | The AMI to be used for the staging instance -- do not change unless need to for compliance requirements |
 	| Key Pair | Select the key pair in your account to be used to SSH into the staging instance |
 	| On Prem CIDR | The CIDR to be used to SSH into the staging instance |
-	| SubnetID | Select the public subnet with IPv4 auto-assign enabled from the prerequisites |
-	| SourceDBPassword | Password of the source database |
+	| Subnet ID | Select the public subnet with IPv4 auto-assign enabled from the prerequisites |
+	| Source Database Password | Password of the source database |
 	
 	An example:
 
