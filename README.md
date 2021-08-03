@@ -105,7 +105,7 @@ Once all appropriate Launch Values and Configurations have been defined, upload 
 	![Example](https://github.com/julbeck/RedshiftPOCAutomation/blob/master/Screen%20Shot%202021-08-03%20at%2011.13.48.png)
 
 	Press **Next**
-4. To make troubleshooting easier, under **Stack creation options**, select *Disabled* under "Rollback on failure" -- press **Next**
+4. To make troubleshooting easier, under **Stack creation options**, select Disabled under "Rollback on failure" -- press **Next**
 5. At the bottom of the page, select the IAM acknowledgment and press **Create stack** to launch the stack
 
 At this point the launch will be initiated. Please see troubleshooting below if the stack launch stalls at any point.
