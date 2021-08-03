@@ -68,7 +68,7 @@ In order to launch the staging and target infrastructures, download the [user-co
 
 ### Configure the config file
 
-The structure of the config file has two parts: (1) a list of key-value pairs, which create a mapping between a specific service and whether it should be launched in the target infrastructure, and (2) configurations for the service that are launched in the target infrastructure. Open the [user-config-template.json](https://github.com/julbeck/RedshiftPOCAutomation/blob/master/user-config-template.json) file and replace the values for the Service Keys in the first section with the appropriate  Launch Value defined in the table below. If you're looking to create a resource, use the corresponding Configuration in the second section.
+The structure of the config file has two parts: (1) a list of key-value pairs, which create a mapping between a specific service and whether it should be launched in the target infrastructure, and (2) configurations for the service that are launched in the target infrastructure. Open the [user-config-template.json](https://github.com/julbeck/RedshiftPOCAutomation/blob/master/user-config-template.json) file and replace the values for the Service Keys in the first section with the appropriate  Launch Value defined in the table below. If you're looking to create a resource, define the corresponding Configuration fields in the second section.
 
 
 | Service Key | Launch Values | Configuration | Description |
