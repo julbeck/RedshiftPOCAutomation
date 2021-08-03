@@ -116,7 +116,9 @@ In the case that the template stall, logs of CloudFormation/CDK events and error
 3. Choose the tab corresponding to the preferred connection option and follow the instructions
 
 	3. In the case that you choose to connect using the browser-based EC2 Instance Connect console, update the EC2 instance security group to allow for traffic from the source CIDR in the table below corresponding to the region you are using
+	
 	| Region | EC2 Connect Source CIDR |
+	| ------ | ------- |
 	| us-gov-east-1 | 18.252.4.0/30 |
 	| us-gov-west-1 | 15.200.28.80/30 |
 	| af-south-1 | 13.244.121.196/30 |
@@ -137,6 +139,7 @@ In the case that the template stall, logs of CloudFormation/CDK events and error
 	| us-east-2 | 3.16.146.0/29 |
 	| us-west-1 | 13.52.6.112/29 |
 	| us-west-2 | 18.237.140.160/29 |
+	
 4. Run `sudo tail -35f /var/log/cloud-init-output.log` to access the logs
 
 ## Security
