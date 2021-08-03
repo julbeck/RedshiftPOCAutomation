@@ -42,7 +42,7 @@ An option for provisioning the VPC is to use the [VPC Launch Wizard console](htt
 	2. Minimum subnet size:
 3. Press **Create VPC**
 
-These resources will be sufficient for the staging infrastructure. If creating the VPC manually is prefered, having at minimum a public subnet is required.
+These resources will be sufficient for the staging infrastructure. If a manually provisioned VPC is prefered, having at minimum a public subnet is required.
 
 ### Auto-assigning public IPv4 addresses
 
