@@ -99,6 +99,7 @@ Once all appropriate Launch Values and Configurations have been defined, upload 
 	| SourceDBPassword | Password of the source database |
 	| SubnetID | Select the public subnet with IPv4 auto-assign enabled from the prerequisites |
 	| VpcId | Select the VPC of the selected subnet |
+	
 	An example:
 
 	![Example](https://github.com/julbeck/RedshiftPOCAutomation/blob/master/Screen%20Shot%202021-08-03%20at%2011.13.48.png)
