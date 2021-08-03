@@ -37,9 +37,6 @@ If these are complete, continue to [deployment steps](#deployment-steps).
 An option for provisioning the VPC is to use the [VPC Launch Wizard console](https://console.aws.amazon.com/vpc/#wizardSelector:) -- you can see the details of the infrastructure launched using this wizard [here](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Scenario1.html).
 1. Open the VPC Launch Wizard console linked above and press **Select** for creating a VPC with a single public subnet 
 2. Configure your desired VPC size, VPC name, subnet size, and subnet name -- other values can be kept as default.
-	
-	2. Minimum VPC size: 
-	2. Minimum subnet size:
 3. Press **Create VPC**
 
 These resources will be sufficient for the staging infrastructure. If a manually provisioned VPC is preferred, having at minimum a public subnet is required.
@@ -92,17 +89,16 @@ Once all appropriate Launch Values and Configurations have been defined, upload 
 	| Field Name | Value |
 	| ---------- | ----- |
 	| Stack name | A name to be used for the launched CloudFormation stacks |
-	| ConfigurationFile | The URI of the config file uploaded to S3 in the previous section |
-	| EC2InstanceAMI | The AMI to be used for the staging instance -- do not change unless need to for compliance requirements |
-	| KeyPair | Select the key pair in your account to be used to SSH into the staging instance |
-	| OnPremisesCIDR | The CIDR to be used to SSH into the staging instance |
-	| SourceDBPassword | Password of the source database |
+	| Configuration File | The URI of the config file uploaded to S3 in the previous section |
+	| EC2 AMI | The AMI to be used for the staging instance -- do not change unless need to for compliance requirements |
+	| Key Pair | Select the key pair in your account to be used to SSH into the staging instance |
+	| On Prem CIDR | The CIDR to be used to SSH into the staging instance |
 	| SubnetID | Select the public subnet with IPv4 auto-assign enabled from the prerequisites |
-	| VpcId | Select the VPC of the selected subnet |
+	| SourceDBPassword | Password of the source database |
 	
 	An example:
 
-	![Example](https://github.com/julbeck/RedshiftPOCAutomation/blob/master/Screen%20Shot%202021-08-03%20at%2011.13.48.png)
+	![Example](https://github.com/julbeck/RedshiftPOCAutomation/blob/master/CloudFormationTemplate.png)
 
 	Press **Next**
 4. To make troubleshooting easier, under **Stack creation options**, select Disabled under "Rollback on failure" -- press **Next**
