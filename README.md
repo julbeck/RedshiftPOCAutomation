@@ -3,7 +3,7 @@
 
 ## Table of Contents
 
-1. [Introduction](#overview-of-deployment)
+1. [Overview of Deployment](#overview-of-deployment)
 1. [Prerequisites](#prerequisites)
 	1. [Launching a VPC](#launching-a-vpc)
 	1. [Auto-assigning public IPv4 addresses](#auto-assigning-public-ipv4-addresses)
@@ -61,11 +61,22 @@ To ensure instances launched in this subnet will be auto-assigned public IPv4 ad
 	
 3. Press **Save**
 
+
 ## Deployment Steps
 
-In order to launch the staging and target infrastructures, download the [user-config-template.json](https://github.com/aws-samples/amazon-redshift-infrastructure-automation) file and the [CDKstaging.yaml](https://github.com/aws-samples/amazon-redshift-infrastructure-automation/blob/main/CDKstaging.yaml) file in this repo.
+In order to launch the staging and target infrastructures, download the [user-config-template.json](https://github.com/aws-samples/amazon-redshift-infrastructure-automation) file and the [CDKstaging.yaml](https://github.com/aws-samples/amazon-redshift-infrastructure-automation/blob/main/CDKstaging.yaml) file in this repo. 
 
 ### Configure the config file
+
+The structure of the config file has two parts: (1) a list of key-value pairs, which create a mapping between a specific service and whether it should be launched in the target infrastructure, and (2) configurations for the service that are launched in the target infrastructure.
+
+| Service Key | Launch Values | Configuration | Description |
+| ----------- | ------------- | ------------- | ----------- |
+| `vpc_id`    | `CREATE`, VPC ID | In case of `CREATE`:<br>`on_prem_cidr`: CIDR block used to connect to VPC (for security groups)<br>`vpc_cidr`: The CIDR block used for the VPC private IPs and size<br>`number_of_az`: Number of Availability Zones the VPC should cover<br>`cidr_mask`: The size of the public and private subnet to be launched in the VPC. | [REQUIRED] The VPC to launch the target resources in -- can either be an existing VPC or created from scratch. |
+| `redshift_endpoint` |  |  |  |
+| `dms_instance_private_endpoint` |  |  |  |
+| `dms_on_prem_to_redshift_target` |  |  |  |
+| `sct_on_prem_to_redshift_target` |  |  |  |
 
 ### Launch the staging template
 
