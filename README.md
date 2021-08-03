@@ -34,8 +34,8 @@ If these are complete, continue to [deployment steps](#deployment-steps).
 
 ### Launching a VPC
 
-An option for provisioning the VPC is to use the [VPC Launch Wizard console](https://console.aws.amazon.com/vpc/home?region=us-east-1#wizardSelector:) -- you can see the details of the infrastructure launched using this wizard [here](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Scenario1.html).
-1. Open the VPC Launch Wizard console linked above, change to desired region, and press **Select** for creating a VPC with a single public subnet 
+An option for provisioning the VPC is to use the [VPC Launch Wizard console](https://console.aws.amazon.com/vpc/#wizardSelector:) -- you can see the details of the infrastructure launched using this wizard [here](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Scenario1.html).
+1. Open the VPC Launch Wizard console linked above and press **Select** for creating a VPC with a single public subnet 
 2. Configure your desired VPC size, VPC name, subnet size, and subnet name -- other values can be kept as default.
 	
 	2. Minimum VPC size: 
