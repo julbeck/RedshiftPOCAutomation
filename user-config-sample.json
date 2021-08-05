@@ -5,6 +5,7 @@
   "dms_on_prem_to_redshift_target": "CREATE",
   "sct_on_prem_to_redshift_target": "CREATE",
 
+
   "vpc": {
     "on_prem_cidr": "18.206.107.24/29",
     "vpc_cidr": "10.1.0.0/16",
@@ -24,9 +25,9 @@
     "source_engine": "sqlserver",
     "source_schema": "dbo",
     "source_host": "ec2-00-000-000-00.compute-1.amazonaws.com",
-    "source_user": "awssct",
+    "source_user": "admin",
     "source_port": 1433,
-    "migration_type": "cdc"
+    "migration_type": "full-load"
   },
   "sct_on_prem_to_redshift": {
     "key_name": "key_pair",
