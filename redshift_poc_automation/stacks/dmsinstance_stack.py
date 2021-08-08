@@ -12,9 +12,7 @@ class GlobalArgs():
     OWNER = "Redshift POC SSA team"
     ENVIRONMENT = "development"
     REPO_NAME = "redshift-demo"
-    SOURCE_INFO = f"https://github.com/kaklis/RedshiftPOCAutomation"
     VERSION = "2021_03_15"
-    SUPPORT_EMAIL = ["aws-redshift-poc-sa-amer@amazon.com"]
 
 class DmsInstanceStack(core.Stack):
 

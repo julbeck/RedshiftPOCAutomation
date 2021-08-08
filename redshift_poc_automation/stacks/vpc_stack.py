@@ -12,9 +12,7 @@ class GlobalArgs():
     OWNER = "Redshift POC SSA team"
     ENVIRONMENT = "development"
     REPO_NAME = "redshift-demo"
-    SOURCE_INFO = f"https://github.com/kaklis/RedshiftPOCAutomation"
     VERSION = "2021_03_15"
-    SUPPORT_EMAIL = ["aws-redshift-poc-sa-amer@amazon.com"]
 
 class VpcStack(core.Stack):
 
@@ -70,12 +68,7 @@ class VpcStack(core.Stack):
         self.dms_security_group.add_ingress_rule(peer=self.dms_security_group, connection=aws_ec2.Port.all_traffic(), description="Self-referencing rule.")
         self.dms_security_group.add_ingress_rule(peer=aws_ec2.Peer.any_ipv4(), connection=aws_ec2.Port.tcp(22), description="SSH from anywhere")
 
-        output_0 = core.CfnOutput(
-            self,
-            "AutomationFrom",
-            value=f"{GlobalArgs.SOURCE_INFO}",
-            description="To know more about this automation stack, check out our GitHub page."
-        )
+
         output_1 = core.CfnOutput(
             self,
             "New SG",
