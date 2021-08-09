@@ -3,6 +3,7 @@ from aws_cdk import aws_iam
 from aws_cdk import aws_secretsmanager
 from aws_cdk import core
 import json
+from aws_cdk import aws_ec2
 import boto3
 import builtins
 
@@ -21,10 +22,20 @@ class RedshiftStack(core.Stack):
         super().__init__(scope, id, **kwargs)
 
         if redshift_endpoint != "CREATE":
-            ################# todo fix code doesn't work for bootstrap for existing cluster ###########
             redshift_client = boto3.client('redshift')
             cluster_identifier = redshift_endpoint.split('.')[0]
             self.redshift = redshift_client.describe_clusters(ClusterIdentifier=cluster_identifier)['Clusters'][0]
+
+            redshift_sg = self.redshift['VpcSecurityGroups'][0]['VpcSecurityGroupId']
+            security_group_id = vpc.get_vpc_security_group_id
+
+            redshift_sg.add_ingress_rule(security_group_id, connection=aws_ec2.Port.all_traffic(), description="Self-referencing rule.")
+
+            self.redshift.database_name = self.redshift['DBName']
+            self.redshift.master_user_password = 'RedshiftClusterSecretAA'
+            self.redshift.master_user_name = self.redshift['MasterUsername']
+            self.redshift.attr_endpoint_address = redshift_endpoint
+
         else:
 
             cluster_identifier = redshift_config.get('cluster_identifier')
@@ -82,7 +93,7 @@ class RedshiftStack(core.Stack):
 
             security_group_id = vpc.get_vpc_security_group_id
 
-            self.demo_cluster = aws_redshift.CfnCluster(
+            self.redshift = aws_redshift.CfnCluster(
                 self,
                 cluster_identifier,
                 db_name=database_name,
@@ -103,7 +114,7 @@ class RedshiftStack(core.Stack):
         output_1 = core.CfnOutput(
             self,
             "RedshiftCluster",
-            value=f"{self.demo_cluster.attr_endpoint_address}",
+            value=f"{self.redshift.attr_endpoint_address}",
             description=f"RedshiftCluster Endpoint"
         )
 
@@ -141,23 +152,23 @@ class RedshiftStack(core.Stack):
     # properties to share with other stacks
     @property
     def get_cluster(self):
-        return self.demo_cluster
+        return self.redshift
 
     @property
     def get_cluster_dbname(self) -> builtins.str:
-        return self.demo_cluster.db_name
+        return self.redshift.db_name
 
     @property
     def get_cluster_user(self) -> builtins.str:
-        return self.demo_cluster.master_username
+        return self.redshift.master_username
 
     @property
     def get_cluster_password(self) -> builtins.str:
-        return self.demo_cluster.master_user_password
+        return self.redshift.master_user_password
 
     @property
     def get_cluster_host(self) -> builtins.str:
-        return self.demo_cluster.attr_endpoint_address
+        return self.redshift.attr_endpoint_address
 
     @property
     def get_cluster_iam_role(self) -> builtins.str:
@@ -174,4 +185,4 @@ class RedshiftStack(core.Stack):
 
     @property
     def get_cluster_availability_zone(self) -> builtins.str:
-        return str(self.demo_cluster.availability_zone)
+        return str(self.redshift.availability_zone)
