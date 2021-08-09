@@ -7,7 +7,6 @@ from aws_cdk import aws_ec2
 import boto3
 import builtins
 
-
 class RedshiftStack(core.Stack):
 
     def __init__(
@@ -26,10 +25,10 @@ class RedshiftStack(core.Stack):
             cluster_identifier = redshift_endpoint.split('.')[0]
             self.redshift = redshift_client.describe_clusters(ClusterIdentifier=cluster_identifier)['Clusters'][0]
 
-            redshift_sg = self.redshift['VpcSecurityGroups'][0]['VpcSecurityGroupId']
-            security_group_id = vpc.get_vpc_security_group_id
+            redshift_sg = self.redshift['VpcSecurityGroups'][0]
+            security_group = vpc.get_vpc_security_group
 
-            redshift_sg.add_ingress_rule(security_group_id, connection=aws_ec2.Port.all_traffic(), description="Self-referencing rule.")
+            redshift_sg.add_ingress_rule(security_group, connection=aws_ec2.Port.all_traffic(), description="Self-referencing rule.")
 
             self.redshift.database_name = self.redshift['DBName']
             self.redshift.master_user_password = 'RedshiftClusterSecretAA'
