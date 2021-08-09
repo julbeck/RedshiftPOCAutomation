@@ -22,10 +22,12 @@ class RedshiftStack(core.Stack):
 
         if redshift_endpoint != "CREATE":
             redshift_client = boto3.client('redshift')
+            ec2_client = boto3.client('ec2')
             cluster_identifier = redshift_endpoint.split('.')[0]
             self.redshift = redshift_client.describe_clusters(ClusterIdentifier=cluster_identifier)['Clusters'][0]
 
-            redshift_sg = self.redshift['VpcSecurityGroups'][0]
+            redshift_sg_id = self.redshift['VpcSecurityGroups'][0]
+            redshift_sg = ec2_client.get_all_security_groups(group_ids=[redshift_sg_id])[0]
             security_group = vpc.get_vpc_security_group
 
             redshift_sg.add_ingress_rule(security_group, connection=aws_ec2.Port.all_traffic(), description="Self-referencing rule.")
