@@ -24,9 +24,9 @@ class RedshiftStack(core.Stack):
             redshift_client = boto3.client('redshift')
             ec2_client = boto3.resource('ec2')
             cluster_identifier = redshift_endpoint.split('.')[0]
-            self.redshift = redshift_client.describe_clusters(ClusterIdentifier=cluster_identifier)['Clusters'][0]
+            redshift_cluster = redshift_client.describe_clusters(ClusterIdentifier=cluster_identifier)['Clusters'][0]
             
-            redshift_sg_id = self.redshift['VpcSecurityGroups'][0]['VpcSecurityGroupId']
+            redshift_sg_id =redshift_cluster['VpcSecurityGroups'][0]['VpcSecurityGroupId']
             redshift_sg_name = ec2_client.SecurityGroup(redshift_sg_id).group_name
 
             redshift_sg = aws_ec2.SecurityGroup.from_security_group_id(self,redshift_sg_name,redshift_sg_id)
@@ -34,10 +34,12 @@ class RedshiftStack(core.Stack):
             dms_sg = vpc.get_vpc_security_group            
             redshift_sg.add_ingress_rule(peer=dms_sg, connection=aws_ec2.Port.all_traffic(), description="DMS input.")
 
-            self.redshift.db_name = self.redshift['DBName']
-            self.redshift.master_user_password = 'RedshiftClusterSecretAA'
-            self.redshift.master_user_name = self.redshift['MasterUsername']
-            self.redshift.attr_endpoint_address = redshift_endpoint
+            
+            
+            db_name = self.redshift['DBName']
+            master_user_password = 'RedshiftClusterSecretAA'
+            master_user_name = self.redshift['MasterUsername']
+            attr_endpoint_address = redshift_endpoint
 
         else:
 
@@ -159,18 +161,26 @@ class RedshiftStack(core.Stack):
 
     @property
     def get_cluster_dbname(self) -> builtins.str:
+        if redshift_endpoint != "CREATE":
+            return db_name
         return self.redshift.db_name
 
     @property
     def get_cluster_user(self) -> builtins.str:
+        if redshift_endpoint != "CREATE":
+            return master_username
         return self.redshift.master_username
 
     @property
     def get_cluster_password(self) -> builtins.str:
+        if redshift_endpoint != "CREATE":
+            return master_user_password
         return self.redshift.master_user_password
 
     @property
     def get_cluster_host(self) -> builtins.str:
+        if redshift_endpoint != "CREATE":
+            return attr_endpoint_address
         return self.redshift.attr_endpoint_address
 
     @property
@@ -179,6 +189,8 @@ class RedshiftStack(core.Stack):
 
     @property
     def get_cluster_secret(self) -> builtins.str:
+        if redshift_endpoint != "CREATE":
+            return master_user_password
         return self.cluster_masteruser_secret.secret_name
 
     ############## FIX bug in CDK. Always returns None #########################
