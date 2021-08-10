@@ -28,7 +28,7 @@ class RedshiftStack(core.Stack):
             
             
             
-            redshift_sg_id = self.redshift['VpcSecurityGroups'][0]
+            redshift_sg_id = self.redshift['VpcSecurityGroups'][0]['VpcSecurityGroupId']
             redshift_sg = ec2_client.SecurityGroup(redshift_sg_id).group_name
             
             print(redshift_sg)
