@@ -36,9 +36,9 @@ class RedshiftStack(core.Stack):
 
             
             
-            db_name = self.redshift['DBName']
+            db_name = redshift_cluster['DBName']
             master_user_password = 'RedshiftClusterSecretAA'
-            master_user_name = self.redshift['MasterUsername']
+            master_user_name = redshift_cluster['MasterUsername']
             attr_endpoint_address = redshift_endpoint
 
         else:
