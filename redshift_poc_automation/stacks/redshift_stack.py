@@ -36,10 +36,10 @@ class RedshiftStack(core.Stack):
 
             
             
-            db_name = redshift_cluster['DBName']
-            master_user_password = 'RedshiftClusterSecretAA'
-            master_user_name = redshift_cluster['MasterUsername']
-            attr_endpoint_address = redshift_endpoint
+            self.redshift.db_name = redshift_cluster['DBName']
+            self.redshift.master_user_password = 'RedshiftClusterSecretAA'
+            self.redshift.master_user_name = redshift_cluster['MasterUsername']
+            self.redshift.attr_endpoint_address = redshift_endpoint
 
         else:
 
@@ -161,26 +161,26 @@ class RedshiftStack(core.Stack):
 
     @property
     def get_cluster_dbname(self) -> builtins.str:
-        if redshift_endpoint != "CREATE":
-            return db_name
+#         if redshift_endpoint != "CREATE":
+#             return db_name
         return self.redshift.db_name
 
     @property
     def get_cluster_user(self) -> builtins.str:
-        if redshift_endpoint != "CREATE":
-            return master_username
+#         if redshift_endpoint != "CREATE":
+#             return master_username
         return self.redshift.master_username
 
     @property
     def get_cluster_password(self) -> builtins.str:
-        if redshift_endpoint != "CREATE":
-            return master_user_password
+#         if redshift_endpoint != "CREATE":
+#             return master_user_password
         return self.redshift.master_user_password
 
     @property
     def get_cluster_host(self) -> builtins.str:
-        if redshift_endpoint != "CREATE":
-            return attr_endpoint_address
+#         if redshift_endpoint != "CREATE":
+#             return attr_endpoint_address
         return self.redshift.attr_endpoint_address
 
     @property
@@ -189,8 +189,8 @@ class RedshiftStack(core.Stack):
 
     @property
     def get_cluster_secret(self) -> builtins.str:
-        if redshift_endpoint != "CREATE":
-            return master_user_password
+#         if redshift_endpoint != "CREATE":
+#             return master_user_password
         return self.cluster_masteruser_secret.secret_name
 
     ############## FIX bug in CDK. Always returns None #########################
