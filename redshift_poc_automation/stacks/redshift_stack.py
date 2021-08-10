@@ -28,7 +28,7 @@ class RedshiftStack(core.Stack):
 
             redshift_sg_id = self.redshift['VpcSecurityGroups'][0]
             redshift_sg = ec2_client.SecurityGroup(redshift_sg_id)
-            security_group = vpc.get_vpc_security_group_id[0]['VpcSecurityGroupId']
+            security_group = vpc.get_vpc_security_group_id
 
             redshift_sg.authorize_ingress(GroupName = security_group)
 
