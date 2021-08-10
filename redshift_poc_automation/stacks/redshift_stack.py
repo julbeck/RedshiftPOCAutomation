@@ -30,7 +30,7 @@ class RedshiftStack(core.Stack):
             redshift_sg = ec2_client.SecurityGroup(redshift_sg_id)
             security_group = vpc.get_vpc_security_group_id
 
-            redshift_sg.authorize_ingress(GroupName = security_group)[0]
+            redshift_sg.authorize_ingress(GroupName = security_group[0])
 
             self.redshift.database_name = self.redshift['DBName']
             self.redshift.master_user_password = 'RedshiftClusterSecretAA'
