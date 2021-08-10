@@ -116,32 +116,32 @@ class RedshiftStack(core.Stack):
         ###########################################
         ################# OUTPUTS #################
         ###########################################
-        output_1 = core.CfnOutput(
-            self,
-            "RedshiftCluster",
-            value=f"{self.redshift.attr_endpoint_address}",
-            description=f"RedshiftCluster Endpoint"
-        )
+#         output_1 = core.CfnOutput(
+#             self,
+#             "RedshiftCluster",
+#             value=f"{self.redshift.attr_endpoint_address}",
+#             description=f"RedshiftCluster Endpoint"
+#         )
 
-        output_2 = core.CfnOutput(
-            self,
-            "RedshiftClusterPassword",
-            value=(
-                f"https://console.aws.amazon.com/secretsmanager/home?region="
-                f"{core.Aws.REGION}"
-                f"#/secret?name="
-                f"{self.cluster_masteruser_secret.secret_arn}"
-            ),
-            description=f"Redshift Cluster Password in Secrets Manager"
-        )
-        output_3 = core.CfnOutput(
-            self,
-            "RedshiftIAMRole",
-            value=(
-                f"{self.cluster_iam_role.role_arn}"
-            ),
-            description=f"Redshift Cluster IAM Role Arn"
-        )
+#         output_2 = core.CfnOutput(
+#             self,
+#             "RedshiftClusterPassword",
+#             value=(
+#                 f"https://console.aws.amazon.com/secretsmanager/home?region="
+#                 f"{core.Aws.REGION}"
+#                 f"#/secret?name="
+#                 f"{self.cluster_masteruser_secret.secret_arn}"
+#             ),
+#             description=f"Redshift Cluster Password in Secrets Manager"
+#         )
+#         output_3 = core.CfnOutput(
+#             self,
+#             "RedshiftIAMRole",
+#             value=(
+#                 f"{self.cluster_iam_role.role_arn}"
+#             ),
+#             description=f"Redshift Cluster IAM Role Arn"
+#         )
 
         ############## FIX bug in CDK. Always returns None #########################
 
