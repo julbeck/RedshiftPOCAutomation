@@ -2,6 +2,7 @@ from aws_cdk import aws_redshift
 from aws_cdk import aws_iam
 from aws_cdk import aws_secretsmanager
 from aws_cdk import core
+from aws_cdk import securitygroup
 import json
 from aws_cdk import aws_ec2
 import boto3
@@ -29,17 +30,17 @@ class RedshiftStack(core.Stack):
             
             
             redshift_sg_id = self.redshift['VpcSecurityGroups'][0]
-            redshift_sg = ec2_client.SecurityGroup(redshift_sg_id)
+            redshift_sg = ec2_client.SecurityGroup(redshift_sg_id).group_name
             
             print(redshift_sg)
-            
+            redshift_sg_cdk = SecurityGroup.from_security_group_id(self,redshift_sg,redshift_sg_id)
+            print(redshift_sg_cdk)
             
             security_group = vpc.get_vpc_security_group_id[0]
-            print(security_group)
             
             
 
-            redshift_sg.add_ingress_rule(peer=vpc.get_vpc_security_group, connection=aws_ec2.Port.all_traffic(), description="DMS input.")
+            redshift_sg_cdk.add_ingress_rule(peer=vpc.get_vpc_security_group, connection=aws_ec2.Port.all_traffic(), description="DMS input.")
 
             self.redshift.database_name = self.redshift['DBName']
             self.redshift.master_user_password = 'RedshiftClusterSecretAA'
