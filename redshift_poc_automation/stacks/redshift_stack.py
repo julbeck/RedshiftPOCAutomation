@@ -25,20 +25,21 @@ class RedshiftStack(core.Stack):
             ec2_client = boto3.resource('ec2')
             cluster_identifier = redshift_endpoint.split('.')[0]
             self.redshift = redshift_client.describe_clusters(ClusterIdentifier=cluster_identifier)['Clusters'][0]
-
+            
+            
+            
             redshift_sg_id = self.redshift['VpcSecurityGroups'][0]
             redshift_sg = ec2_client.SecurityGroup(redshift_sg_id)
-            security_group = vpc.get_vpc_security_group_id[0]
             
-            output_1 = core.CfnOutput(
-            self,
-            "SecurityGroup",
-            value=f"{security_group}",
-            description=f"Security group at this point"
-            )
+            print(redshift_sg)
+            
+            
+            security_group = vpc.get_vpc_security_group_id[0]
+            print(security_group)
+            
             
 
-            redshift_sg.authorize_ingress(GroupName = security_group)
+            redshift_sg.add_ingress_rule(peer=vpc.get_vpc_security_group, connection=aws_ec2.Port.all_traffic(), description="DMS input.")
 
             self.redshift.database_name = self.redshift['DBName']
             self.redshift.master_user_password = 'RedshiftClusterSecretAA'
