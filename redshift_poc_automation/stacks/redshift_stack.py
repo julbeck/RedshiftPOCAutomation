@@ -26,22 +26,15 @@ class RedshiftStack(core.Stack):
             cluster_identifier = redshift_endpoint.split('.')[0]
             self.redshift = redshift_client.describe_clusters(ClusterIdentifier=cluster_identifier)['Clusters'][0]
             
-            
-            
             redshift_sg_id = self.redshift['VpcSecurityGroups'][0]['VpcSecurityGroupId']
-            redshift_sg = ec2_client.SecurityGroup(redshift_sg_id).group_name
-            
-            print(redshift_sg)
-            redshift_sg_cdk = aws_ec2.SecurityGroup.from_security_group_id(self,redshift_sg,redshift_sg_id)
-            print(redshift_sg_cdk)
-            
-            security_group = vpc.get_vpc_security_group_id[0]
-            
-            
+            redshift_sg_name = ec2_client.SecurityGroup(redshift_sg_id).group_name
 
-            redshift_sg_cdk.add_ingress_rule(peer=vpc.get_vpc_security_group, connection=aws_ec2.Port.all_traffic(), description="DMS input.")
+            redshift_sg = aws_ec2.SecurityGroup.from_security_group_id(self,redshift_sg_name,redshift_sg_id)
+            
+            dms_sg = vpc.get_vpc_security_group            
+            redshift_sg.add_ingress_rule(peer=dms_sg, connection=aws_ec2.Port.all_traffic(), description="DMS input.")
 
-            self.redshift.database_name = self.redshift['DBName']
+            self.redshift.db_name = self.redshift['DBName']
             self.redshift.master_user_password = 'RedshiftClusterSecretAA'
             self.redshift.master_user_name = self.redshift['MasterUsername']
             self.redshift.attr_endpoint_address = redshift_endpoint
