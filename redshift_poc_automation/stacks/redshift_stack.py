@@ -7,6 +7,7 @@ from aws_cdk import aws_ec2
 import boto3
 import builtins
 
+
 class RedshiftStack(core.Stack):
 
     def __init__(
@@ -25,17 +26,15 @@ class RedshiftStack(core.Stack):
             ec2_client = boto3.resource('ec2')
             cluster_identifier = redshift_endpoint.split('.')[0]
             redshift_cluster = redshift_client.describe_clusters(ClusterIdentifier=cluster_identifier)['Clusters'][0]
-            
-            redshift_sg_id =redshift_cluster['VpcSecurityGroups'][0]['VpcSecurityGroupId']
+
+            redshift_sg_id = redshift_cluster['VpcSecurityGroups'][0]['VpcSecurityGroupId']
             redshift_sg_name = ec2_client.SecurityGroup(redshift_sg_id).group_name
 
-            redshift_sg = aws_ec2.SecurityGroup.from_security_group_id(self,redshift_sg_name,redshift_sg_id)
-            
-            dms_sg = vpc.get_vpc_security_group            
+            redshift_sg = aws_ec2.SecurityGroup.from_security_group_id(self, redshift_sg_name, redshift_sg_id)
+
+            dms_sg = vpc.get_vpc_security_group
             redshift_sg.add_ingress_rule(peer=dms_sg, connection=aws_ec2.Port.all_traffic(), description="DMS input.")
 
-            
-            
             self.redshift.db_name = redshift_cluster['DBName']
             self.redshift.master_user_password = 'RedshiftClusterSecretAA'
             self.redshift.master_user_name = redshift_cluster['MasterUsername']
@@ -116,43 +115,44 @@ class RedshiftStack(core.Stack):
         ###########################################
         ################# OUTPUTS #################
         ###########################################
-#         output_1 = core.CfnOutput(
-#             self,
-#             "RedshiftCluster",
-#             value=f"{self.redshift.attr_endpoint_address}",
-#             description=f"RedshiftCluster Endpoint"
-#         )
 
-#         output_2 = core.CfnOutput(
-#             self,
-#             "RedshiftClusterPassword",
-#             value=(
-#                 f"https://console.aws.amazon.com/secretsmanager/home?region="
-#                 f"{core.Aws.REGION}"
-#                 f"#/secret?name="
-#                 f"{self.cluster_masteruser_secret.secret_arn}"
-#             ),
-#             description=f"Redshift Cluster Password in Secrets Manager"
-#         )
-#         output_3 = core.CfnOutput(
-#             self,
-#             "RedshiftIAMRole",
-#             value=(
-#                 f"{self.cluster_iam_role.role_arn}"
-#             ),
-#             description=f"Redshift Cluster IAM Role Arn"
-#         )
+            output_1 = core.CfnOutput(
+                self,
+                "RedshiftType",
+                value=f"{type(self.redshift)}",
+                description=f"RedshiftCluster Object Type"
+            )
 
-        ############## FIX bug in CDK. Always returns None #########################
+    #         output_2 = core.CfnOutput(
+    #             self,
+    #             "RedshiftClusterPassword",
+    #             value=(
+    #                 f"https://console.aws.amazon.com/secretsmanager/home?region="
+    #                 f"{core.Aws.REGION}"
+    #                 f"#/secret?name="
+    #                 f"{self.cluster_masteruser_secret.secret_arn}"
+    #             ),
+    #             description=f"Redshift Cluster Password in Secrets Manager"
+    #         )
+    #         output_3 = core.CfnOutput(
+    #             self,
+    #             "RedshiftIAMRole",
+    #             value=(
+    #                 f"{self.cluster_iam_role.role_arn}"
+    #             ),
+    #             description=f"Redshift Cluster IAM Role Arn"
+    #         )
 
-        # output_4 = core.CfnOutput(
-        #     self,
-        #     "RedshiftClusterIdentifier",
-        #     value=(
-        #         f"{self.demo_cluster.cluster_identifier}"
-        #     ),
-        #     description=f"Redshift Cluster Identifier"
-        # )
+    ############## FIX bug in CDK. Always returns None #########################
+
+    # output_4 = core.CfnOutput(
+    #     self,
+    #     "RedshiftClusterIdentifier",
+    #     value=(
+    #         f"{self.demo_cluster.cluster_identifier}"
+    #     ),
+    #     description=f"Redshift Cluster Identifier"
+    # )
 
     # properties to share with other stacks
     @property
@@ -161,26 +161,26 @@ class RedshiftStack(core.Stack):
 
     @property
     def get_cluster_dbname(self) -> builtins.str:
-#         if redshift_endpoint != "CREATE":
-#             return db_name
+        #         if redshift_endpoint != "CREATE":
+        #             return db_name
         return self.redshift.db_name
 
     @property
     def get_cluster_user(self) -> builtins.str:
-#         if redshift_endpoint != "CREATE":
-#             return master_username
+        #         if redshift_endpoint != "CREATE":
+        #             return master_username
         return self.redshift.master_username
 
     @property
     def get_cluster_password(self) -> builtins.str:
-#         if redshift_endpoint != "CREATE":
-#             return master_user_password
+        #         if redshift_endpoint != "CREATE":
+        #             return master_user_password
         return self.redshift.master_user_password
 
     @property
     def get_cluster_host(self) -> builtins.str:
-#         if redshift_endpoint != "CREATE":
-#             return attr_endpoint_address
+        #         if redshift_endpoint != "CREATE":
+        #             return attr_endpoint_address
         return self.redshift.attr_endpoint_address
 
     @property
@@ -189,8 +189,8 @@ class RedshiftStack(core.Stack):
 
     @property
     def get_cluster_secret(self) -> builtins.str:
-#         if redshift_endpoint != "CREATE":
-#             return master_user_password
+        #         if redshift_endpoint != "CREATE":
+        #             return master_user_password
         return self.cluster_masteruser_secret.secret_name
 
     ############## FIX bug in CDK. Always returns None #########################
