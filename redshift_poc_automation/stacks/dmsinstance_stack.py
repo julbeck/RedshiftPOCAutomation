@@ -50,7 +50,7 @@ class DmsInstanceStack(core.Stack):
         #   )
         public_subnets = vpc.get_vpc_public_subnet_ids
         private_subnets = vpc.get_vpc_private_subnet_ids
-        subnets = public_subnets + private_subnets
+        subnets = public_subnets
 
         dms_subnet_group = aws_dms.CfnReplicationSubnetGroup(
             self,
