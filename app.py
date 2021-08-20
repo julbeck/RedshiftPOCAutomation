@@ -41,7 +41,7 @@ sct_on_prem_to_redshift_config = config.get('sct_on_prem_to_redshift')
 
 glue_crawler_s3_target = "N/A"
 glue_crawler_s3_config = "N/A"
-
+print("test 2 pt 2")
 stackname = os.getenv('STACK_NAME')
 # VPC Stack for hosting secure API & other resources
 vpc_stack = VpcStack(
