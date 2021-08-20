@@ -20,7 +20,7 @@ class RedshiftStack(core.Stack):
             **kwargs
     ) -> None:
         super().__init__(scope, id, **kwargs)
-
+        print("test")
         if redshift_endpoint != "CREATE":
             redshift_client = boto3.client('redshift')
             ec2_client = boto3.resource('ec2')
