@@ -48,9 +48,8 @@ class DmsInstanceStack(core.Stack):
         #       ],
         #       role_name = "dms-vpc-role"
         #   )
-        public_subnets = vpc.get_vpc_public_subnet_ids
-        private_subnets = vpc.get_vpc_private_subnet_ids
-        subnets = public_subnets
+
+        subnets = vpc.get_vpc_public_subnet_ids
 
         dms_subnet_group = aws_dms.CfnReplicationSubnetGroup(
             self,
