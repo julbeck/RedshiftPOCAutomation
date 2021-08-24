@@ -198,8 +198,8 @@ class RedshiftStack(core.Stack):
     @property
     def get_cluster_iam_role(self) -> builtins.str:
         return self.cluster_iam_role.role_arn
-
-   @property
+    
+    @property
     def get_cluster_secret(self) -> builtins.str:
         if type(self.redshift) == dict:
             return 'RedshiftPassword'
