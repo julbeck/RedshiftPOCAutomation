@@ -20,7 +20,7 @@ class RedshiftStack(core.Stack):
             **kwargs
     ) -> None:
         super().__init__(scope, id, **kwargs)
-        print("test")
+        print(redshift_endpoint)
         if redshift_endpoint != "CREATE":
             redshift_client = boto3.client('redshift')
             ec2_client = boto3.resource('ec2')
@@ -41,7 +41,7 @@ class RedshiftStack(core.Stack):
             # self.redshift.attr_endpoint_address = redshift_endpoint
 
         else:
-
+            print('!!!!!!!!!!!!!!!!!!!!!!')
             cluster_identifier = redshift_config.get('cluster_identifier')
             database_name = redshift_config.get('database_name')
             node_type = redshift_config.get('node_type')
