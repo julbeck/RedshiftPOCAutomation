@@ -105,7 +105,7 @@ class RedshiftStack(core.Stack):
                 encryptcluster = bool(0)
 
             security_group_id = vpc.get_vpc_security_group_id
-
+            print(self.cluster_masteruser_secret.secret_value.to_string())
             self.redshift = aws_redshift.CfnCluster(
                 self,
                 cluster_identifier,
