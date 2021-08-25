@@ -170,6 +170,10 @@ class RedshiftStack(core.Stack):
         if type(self.redshift) == dict:
             return self.redshift
         return self.redshift
+    
+    @property
+    def get_cluster_type(self):
+        return (type(self.redshift) == dict)
 
     @property
     def get_cluster_dbname(self) -> builtins.str:
@@ -185,8 +189,6 @@ class RedshiftStack(core.Stack):
 
     @property
     def get_cluster_password(self) -> builtins.str:
-        if type(self.redshift) == dict:
-            return 'RedshiftPassword'
         return self.redshift.master_user_password
 
     @property
