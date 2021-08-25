@@ -41,7 +41,7 @@ class RedshiftStack(core.Stack):
             # self.redshift.attr_endpoint_address = redshift_endpoint
 
         else:
-            print('!!!!!!!!!!!!!!!!!!!!!!')
+
             cluster_identifier = redshift_config.get('cluster_identifier')
             database_name = redshift_config.get('database_name')
             node_type = redshift_config.get('node_type')
@@ -49,6 +49,7 @@ class RedshiftStack(core.Stack):
             master_user_name = redshift_config.get('master_user_name')
             subnet_type = redshift_config.get('subnet_type')
             encryption = redshift_config.get('encryption')
+
 
             # Create Cluster Password  ## MUST FIX EXCLUDE CHARACTERS FEATURE AS IT STILL INCLUDES SINGLE QUOTES SOMETIMES WHICH WILL FAIL
             self.cluster_masteruser_secret = aws_secretsmanager.Secret(
@@ -95,7 +96,7 @@ class RedshiftStack(core.Stack):
             else:
                 clustertype = "single-node"
                 number_of_nodes = None
-
+            
             # Encryption boolean to True if Y or y
             if encryption == "Y":
                 encryptcluster = bool(1)
@@ -105,8 +106,8 @@ class RedshiftStack(core.Stack):
                 encryptcluster = bool(0)
 
             security_group_id = vpc.get_vpc_security_group_id
-            print(self.cluster_masteruser_secret.secret_value.to_string())
-            self.redshift = aws_redshift.CfnCluster(
+
+            self.demo_cluster = aws_redshift.CfnCluster(
                 self,
                 cluster_identifier,
                 db_name=database_name,
@@ -121,7 +122,6 @@ class RedshiftStack(core.Stack):
                 cluster_subnet_group_name=self.cluster_subnet_group.ref,
                 vpc_security_group_ids=[security_group_id]
             )
-
         ###########################################
         ################# OUTPUTS #################
         ###########################################
@@ -186,7 +186,7 @@ class RedshiftStack(core.Stack):
     @property
     def get_cluster_password(self) -> builtins.str:
         if type(self.redshift) == dict:
-            return 'RedshiftClusterSecretAA'
+            return 'RedshiftPassword'
         return self.redshift.master_user_password
 
     @property
