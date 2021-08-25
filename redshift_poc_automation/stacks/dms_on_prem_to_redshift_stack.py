@@ -47,9 +47,14 @@ class DmsOnPremToRedshiftStack(core.Stack):
         source_pwd = client.get_secret_value(
             SecretId=secret_name
         )['SecretString']
-        target_pwd = client.get_secret_value(
-            SecretId=cluster.get_cluster_secret
-        )['SecretString']
+        
+        if cluster.get_cluster_type:
+            target_pwd = client.get_secret_value(
+                SecretId=cluster.get_cluster_secret
+            )['SecretString']
+        else:
+            target_pwd = cluster.get_cluster_password
+            
 
         tablemappings="""{
           "rules": [
