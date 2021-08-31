@@ -206,7 +206,7 @@ class RedshiftStack(core.Stack):
     @property
     def get_cluster_secret(self) -> builtins.str:
         if type(self.redshift) == dict:
-            return 'RedshiftClusterSecretAA'
+            return 'RedshiftPassword'
         return self.cluster_masteruser_secret.secret_name
 
     ############## FIX bug in CDK. Always returns None #########################
