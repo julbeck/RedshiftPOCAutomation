@@ -199,13 +199,16 @@ class RedshiftStack(core.Stack):
 
     @property
     def get_cluster_iam_role(self) -> builtins.str:
+        if type(self.redshift) == dict:
+            return self.redshift['IamRoles'][0]['IamRoleArn']
         return self.cluster_iam_role.role_arn
-    
+
     @property
     def get_cluster_secret(self) -> builtins.str:
         if type(self.redshift) == dict:
-            return 'RedshiftPassword'
+            return 'RedshiftClusterSecretAA'
         return self.cluster_masteruser_secret.secret_name
+
     ############## FIX bug in CDK. Always returns None #########################
     # @property
     # def get_cluster_identifier(self) -> builtins.str:
@@ -213,4 +216,6 @@ class RedshiftStack(core.Stack):
 
     @property
     def get_cluster_availability_zone(self) -> builtins.str:
+        if type(self.redshift) == dict:
+            return self.redshift['AvailabilityZone']
         return str(self.redshift.availability_zone)
